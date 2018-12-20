@@ -1,12 +1,12 @@
 package com.hugoltsp.spring.boot.starter.jwt.filter;
 
-import com.hugoltsp.spring.boot.starter.jwt.filter.settings.JwtAuthenticationSettings;
+import com.hugoltsp.spring.boot.starter.jwt.filter.setting.JwtAuthenticationSettings;
 import com.hugoltsp.spring.boot.starter.jwt.filter.userdetails.UserDetails;
 import com.hugoltsp.spring.boot.starter.jwt.filter.userdetails.UserDetailsFinder;
 import com.hugoltsp.spring.boot.starter.jwt.filter.userdetails.UserDetailsValidator;
 import com.hugoltsp.spring.boot.starter.jwt.filter.authentication.AuthenticationContext;
 import com.hugoltsp.spring.boot.starter.jwt.filter.authentication.AuthenticationContextFactory;
-import com.hugoltsp.spring.boot.starter.jwt.filter.util.JwtTokenUtil;
+import com.hugoltsp.spring.boot.starter.jwt.filter.util.AuthorizationHeaderUtil;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import org.slf4j.Logger;
@@ -42,7 +42,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         this.authenticationContextFactory = authenticationContextFactory;
     }
 
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
+    @Override
+    protected void doFilterInternal(HttpServletRequest request,
+                                    HttpServletResponse response,
                                     FilterChain filterChain) throws IOException, ServletException {
 
         if (settings.isPublic(request)) {
@@ -55,7 +57,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
                 Claims claims = Jwts.parser()
                         .setSigningKey(settings.getSecretKey())
-                        .parseClaimsJws(JwtTokenUtil.extractTokenFromRequest(request))
+                        .parseClaimsJws(AuthorizationHeaderUtil.extractToken(request))
                         .getBody();
 
                 Optional<UserDetails> userDetails = userDetailsFinder.findByClaims(claims);
@@ -67,7 +69,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             } catch (Exception e) {
                 LOGGER.error("Invalid token.", e);
                 response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
-                return;
             }
 
         }

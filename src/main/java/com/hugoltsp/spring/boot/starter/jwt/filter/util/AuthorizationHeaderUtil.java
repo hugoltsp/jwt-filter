@@ -6,33 +6,33 @@ import org.springframework.http.HttpHeaders;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Optional;
 
-public class JwtTokenUtil {
+public final class AuthorizationHeaderUtil {
 
-    private JwtTokenUtil() {
+    private AuthorizationHeaderUtil() {
 
     }
 
-    public static String extractTokenFromRequest(HttpServletRequest request) {
+    public static String extractToken(HttpServletRequest request) {
 
-        String authorizationHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
+        String authorizationHeader = getHeaderValue(request);
 
         if (!isHeaderValid(authorizationHeader)) {
             throw new MalformedAuthorizationHeaderException("No valid Authorization Header found");
         }
 
-        return getTokenFromHeader(authorizationHeader)
+        return parseToken(authorizationHeader)
                 .orElseThrow(() -> new MalformedAuthorizationHeaderException("Malformed token"));
+    }
+
+    private static String getHeaderValue(HttpServletRequest request) {
+        return request.getHeader(HttpHeaders.AUTHORIZATION);
     }
 
     private static boolean isHeaderValid(String authorizationHeader) {
         return authorizationHeader != null && authorizationHeader.startsWith("Bearer ");
     }
 
-    private static Optional<String> getTokenFromHeader(String authorizationHeader) {
-        return Optional.of(parseToken(authorizationHeader));
-    }
-
-    private static String parseToken(String authorizationHeader) {
+    private static Optional<String> parseToken(String authorizationHeader) {
 
         String token = null;
 
@@ -42,6 +42,6 @@ public class JwtTokenUtil {
             token = splitHeader[1];
         }
 
-        return token;
+        return Optional.ofNullable(token);
     }
 }
