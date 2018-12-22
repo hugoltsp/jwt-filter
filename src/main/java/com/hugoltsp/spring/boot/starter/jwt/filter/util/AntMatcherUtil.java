@@ -4,14 +4,15 @@ import org.springframework.util.AntPathMatcher;
 
 public final class AntMatcherUtil {
 
-    private static final AntPathMatcher ANT_PATH_MATCHER = new AntPathMatcher();
+	private static final AntPathMatcher ANT_PATH_MATCHER = new AntPathMatcher();
 
-    private AntMatcherUtil() {
+	private AntMatcherUtil() {
 
-    }
+	}
 
-    public static boolean matches(String pattern1, String pattern2) {
+	public static boolean matches(String pattern1, String pattern2) {
 
-        return ANT_PATH_MATCHER.match(pattern1, pattern2);
-    }
+		return ANT_PATH_MATCHER.match(pattern1, pattern2);
+	}
+
 }

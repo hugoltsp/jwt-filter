@@ -5,6 +5,6 @@ import io.jsonwebtoken.Claims;
 @FunctionalInterface
 public interface UserDetailsValidator {
 
-    void validate(UserDetails user, Claims claims);
+	void validate(UserDetails user, Claims claims);
 
 }

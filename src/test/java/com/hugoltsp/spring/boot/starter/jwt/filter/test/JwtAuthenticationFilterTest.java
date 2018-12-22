@@ -27,69 +27,71 @@ import static org.springframework.http.HttpMethod.GET;
 @RunWith(MockitoJUnitRunner.class)
 public class JwtAuthenticationFilterTest {
 
-    @Mock
-    private JwtAuthenticationSettings settings;
+	@Mock
+	private JwtAuthenticationSettings settings;
 
-    @Mock
-    private UserDetailsValidator userDetailsValidator;
+	@Mock
+	private UserDetailsValidator userDetailsValidator;
 
-    @Mock
-    private UserDetailsFinder userDetailsFinder;
+	@Mock
+	private UserDetailsFinder userDetailsFinder;
 
-    @Mock
-    private AuthenticationContextFactory authenticationContextFactory;
+	@Mock
+	private AuthenticationContextFactory authenticationContextFactory;
 
-    @InjectMocks
-    private JwtAuthenticationFilter jwtAuthenticationFilter;
+	@InjectMocks
+	private JwtAuthenticationFilter jwtAuthenticationFilter;
 
-    @Test
-    public void should_return_200_when_request_is_deemed_public() throws Exception {
+	@Test
+	public void should_return_200_when_request_is_deemed_public() throws Exception {
 
-        MockHttpServletRequest request = new MockHttpServletRequest();
+		MockHttpServletRequest request = new MockHttpServletRequest();
 
-        when(settings.isPublic(request)).thenReturn(true);
+		when(settings.isPublic(request)).thenReturn(true);
 
-        MockHttpServletResponse response = new MockHttpServletResponse();
-        MockFilterChain filterChain = new MockFilterChain();
+		MockHttpServletResponse response = new MockHttpServletResponse();
+		MockFilterChain filterChain = new MockFilterChain();
 
-        jwtAuthenticationFilter.doFilter(request, response, filterChain);
+		jwtAuthenticationFilter.doFilter(request, response, filterChain);
 
-        assertThat(response.getStatus()).isEqualTo(SC_OK);
-    }
+		assertThat(response.getStatus()).isEqualTo(SC_OK);
+	}
 
-    @Test
-    public void should_return_200_when_request_is_protected_and_user_is_authenticated() throws Exception {
+	@Test
+	public void should_return_200_when_request_is_protected_and_user_is_authenticated()
+			throws Exception {
 
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        request.setMethod(GET.name());
-        request.setRequestURI("/test");
-        request.addHeader(AUTHORIZATION, "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJzdWIiLCJuYW1lIjoiSm9obiBEb2UifQ.jKexo6MlFW78w31biGfZGqaf3LRY3KZKMuXJFtkCJ6k");
+		MockHttpServletRequest request = new MockHttpServletRequest();
+		request.setMethod(GET.name());
+		request.setRequestURI("/test");
+		request.addHeader(AUTHORIZATION,
+				"Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJzdWIiLCJuYW1lIjoiSm9obiBEb2UifQ.jKexo6MlFW78w31biGfZGqaf3LRY3KZKMuXJFtkCJ6k");
 
-        when(settings.isPublic(request)).thenReturn(false);
-        when(settings.getSecretKey()).thenReturn("some-secret-key");
-        when(userDetailsFinder.findByClaims(any())).thenReturn(Optional.empty());
+		when(settings.isPublic(request)).thenReturn(false);
+		when(settings.getSecretKey()).thenReturn("some-secret-key");
+		when(userDetailsFinder.findByClaims(any())).thenReturn(Optional.empty());
 
-        MockHttpServletResponse response = new MockHttpServletResponse();
-        MockFilterChain filterChain = new MockFilterChain();
+		MockHttpServletResponse response = new MockHttpServletResponse();
+		MockFilterChain filterChain = new MockFilterChain();
 
-        jwtAuthenticationFilter.doFilter(request, response, filterChain);
+		jwtAuthenticationFilter.doFilter(request, response, filterChain);
 
-        assertThat(response.getStatus()).isEqualTo(SC_OK);
-    }
+		assertThat(response.getStatus()).isEqualTo(SC_OK);
+	}
 
-    @Test
-    public void should_return_401_when_request_is_protected() throws Exception {
+	@Test
+	public void should_return_401_when_request_is_protected() throws Exception {
 
-        MockHttpServletRequest request = new MockHttpServletRequest();
+		MockHttpServletRequest request = new MockHttpServletRequest();
 
-        when(settings.isPublic(request)).thenReturn(false);
+		when(settings.isPublic(request)).thenReturn(false);
 
-        MockHttpServletResponse response = new MockHttpServletResponse();
-        MockFilterChain filterChain = new MockFilterChain();
+		MockHttpServletResponse response = new MockHttpServletResponse();
+		MockFilterChain filterChain = new MockFilterChain();
 
-        jwtAuthenticationFilter.doFilter(request, response, filterChain);
+		jwtAuthenticationFilter.doFilter(request, response, filterChain);
 
-        assertThat(response.getStatus()).isEqualTo(SC_UNAUTHORIZED);
-    }
+		assertThat(response.getStatus()).isEqualTo(SC_UNAUTHORIZED);
+	}
 
 }

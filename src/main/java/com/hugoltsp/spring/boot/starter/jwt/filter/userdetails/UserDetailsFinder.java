@@ -7,6 +7,6 @@ import java.util.Optional;
 @FunctionalInterface
 public interface UserDetailsFinder {
 
-    Optional<UserDetails> findByClaims(Claims claims);
+	Optional<UserDetails> findByClaims(Claims claims);
 
 }

@@ -16,69 +16,74 @@ import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 @RunWith(SpringJUnit4ClassRunner.class)
 public class AuthorizationHeaderUtilTest {
 
-    @Rule
-    public ExpectedException exceptionRule = none();
+	@Rule
+	public ExpectedException exceptionRule = none();
 
-    @Test
-    public void extractToken_should_return_token_when_request_contains_valid_authorization_header() throws Exception {
+	@Test
+	public void extractToken_should_return_token_when_request_contains_valid_authorization_header()
+			throws Exception {
 
-        String expectedToken = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJzdWIiLCJuYW1lIjoiSm9obiBEb2UifQ.jKexo6MlFW78w31biGfZGqaf3LRY3KZKMuXJFtkCJ6k";
+		String expectedToken = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJzdWIiLCJuYW1lIjoiSm9obiBEb2UifQ.jKexo6MlFW78w31biGfZGqaf3LRY3KZKMuXJFtkCJ6k";
 
-        MockHttpServletRequest request = createRequest("Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJzdWIiLCJuYW1lIjoiSm9obiBEb2UifQ.jKexo6MlFW78w31biGfZGqaf3LRY3KZKMuXJFtkCJ6k");
+		MockHttpServletRequest request = createRequest(
+				"Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJzdWIiLCJuYW1lIjoiSm9obiBEb2UifQ.jKexo6MlFW78w31biGfZGqaf3LRY3KZKMuXJFtkCJ6k");
 
-        assertThat(AuthorizationHeaderUtil.extractToken(request)).isEqualTo(expectedToken);
-    }
+		assertThat(AuthorizationHeaderUtil.extractToken(request))
+				.isEqualTo(expectedToken);
+	}
 
+	@Test
+	public void extractToken_should_return_MalformedAuthorizationHeaderException_when_no_valid_authorization_header_is_blank()
+			throws Exception {
 
-    @Test
-    public void extractToken_should_return_MalformedAuthorizationHeaderException_when_no_valid_authorization_header_is_blank() throws Exception {
+		MockHttpServletRequest request = createRequest("");
 
-        MockHttpServletRequest request = createRequest("");
+		exceptionRule.expect(MalformedAuthorizationHeaderException.class);
+		exceptionRule.expectMessage("No valid Authorization Header found");
 
-        exceptionRule.expect(MalformedAuthorizationHeaderException.class);
-        exceptionRule.expectMessage("No valid Authorization Header found");
+		AuthorizationHeaderUtil.extractToken(request);
+	}
 
-        AuthorizationHeaderUtil.extractToken(request);
-    }
+	@Test
+	public void extractToken_should_return_MalformedAuthorizationHeaderException_when_no_valid_authorization_header_is_null()
+			throws Exception {
 
+		MockHttpServletRequest request = new MockHttpServletRequest();
 
-    @Test
-    public void extractToken_should_return_MalformedAuthorizationHeaderException_when_no_valid_authorization_header_is_null() throws Exception {
+		exceptionRule.expect(MalformedAuthorizationHeaderException.class);
+		exceptionRule.expectMessage("No valid Authorization Header found");
 
-        MockHttpServletRequest request = new MockHttpServletRequest();
+		AuthorizationHeaderUtil.extractToken(request);
+	}
 
-        exceptionRule.expect(MalformedAuthorizationHeaderException.class);
-        exceptionRule.expectMessage("No valid Authorization Header found");
+	@Test
+	public void extractToken_should_return_MalformedAuthorizationHeaderException_when_no_valid_authorization_header_has_no_Bearer_prefix()
+			throws Exception {
 
-        AuthorizationHeaderUtil.extractToken(request);
-    }
+		MockHttpServletRequest request = createRequest(" test test 123");
 
-    @Test
-    public void extractToken_should_return_MalformedAuthorizationHeaderException_when_no_valid_authorization_header_has_no_Bearer_prefix() throws Exception {
+		exceptionRule.expect(MalformedAuthorizationHeaderException.class);
+		exceptionRule.expectMessage("No valid Authorization Header found");
 
-        MockHttpServletRequest request = createRequest(" test test 123");
+		AuthorizationHeaderUtil.extractToken(request);
+	}
 
-        exceptionRule.expect(MalformedAuthorizationHeaderException.class);
-        exceptionRule.expectMessage("No valid Authorization Header found");
+	@Test
+	public void extractToken_should_return_MalformedAuthorizationHeaderException_when_there_is_no_token()
+			throws Exception {
 
-        AuthorizationHeaderUtil.extractToken(request);
-    }
+		MockHttpServletRequest request = createRequest("Bearer ");
 
-    @Test
-    public void extractToken_should_return_MalformedAuthorizationHeaderException_when_there_is_no_token() throws Exception {
+		exceptionRule.expect(MalformedAuthorizationHeaderException.class);
+		exceptionRule.expectMessage("Malformed token");
 
-        MockHttpServletRequest request = createRequest("Bearer ");
+		AuthorizationHeaderUtil.extractToken(request);
+	}
 
-        exceptionRule.expect(MalformedAuthorizationHeaderException.class);
-        exceptionRule.expectMessage("Malformed token");
-
-        AuthorizationHeaderUtil.extractToken(request);
-    }
-
-    private static MockHttpServletRequest createRequest(String authorizationHeaderValue) {
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        request.addHeader(AUTHORIZATION, authorizationHeaderValue);
-        return request;
-    }
+	private static MockHttpServletRequest createRequest(String authorizationHeaderValue) {
+		MockHttpServletRequest request = new MockHttpServletRequest();
+		request.addHeader(AUTHORIZATION, authorizationHeaderValue);
+		return request;
+	}
 
 }

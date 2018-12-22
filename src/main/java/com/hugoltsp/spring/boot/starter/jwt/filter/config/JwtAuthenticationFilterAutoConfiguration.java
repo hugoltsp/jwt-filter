@@ -19,39 +19,42 @@ import java.util.Optional;
 @ConditionalOnClass(JwtAuthenticationFilter.class)
 public class JwtAuthenticationFilterAutoConfiguration {
 
-    private static final String LOG_NO_CUSTOM_BEAN_PROVIDED = "No bean of type [{}] provided, falling back to default implementation.";
+	private static final String LOG_NO_CUSTOM_BEAN_PROVIDED = "No bean of type [{}] provided, falling back to default implementation.";
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(JwtAuthenticationFilterAutoConfiguration.class);
+	private static final Logger LOGGER = LoggerFactory
+			.getLogger(JwtAuthenticationFilterAutoConfiguration.class);
 
-    @Bean
-    @ConditionalOnMissingBean
-    public UserDetailsValidator noOpUserDetailsValidator() {
-        LOGGER.info(LOG_NO_CUSTOM_BEAN_PROVIDED, UserDetailsValidator.class.getSimpleName());
-        return (u, c) -> {
-        };
-    }
+	@Bean
+	@ConditionalOnMissingBean
+	public UserDetailsValidator noOpUserDetailsValidator() {
+		LOGGER.info(LOG_NO_CUSTOM_BEAN_PROVIDED,
+				UserDetailsValidator.class.getSimpleName());
+		return (u, c) -> {
+		};
+	}
 
-    @Bean
-    @ConditionalOnMissingBean
-    public UserDetailsFinder noOpUserDetailsFinder() {
-        LOGGER.info(LOG_NO_CUSTOM_BEAN_PROVIDED, UserDetailsFinder.class.getSimpleName());
-        return c -> Optional.empty();
-    }
+	@Bean
+	@ConditionalOnMissingBean
+	public UserDetailsFinder noOpUserDetailsFinder() {
+		LOGGER.info(LOG_NO_CUSTOM_BEAN_PROVIDED, UserDetailsFinder.class.getSimpleName());
+		return c -> Optional.empty();
+	}
 
-    @Bean
-    @ConditionalOnMissingBean
-    public AuthenticationContextFactory simpleAuthenticationContextFactory() {
-        LOGGER.info(LOG_NO_CUSTOM_BEAN_PROVIDED, AuthenticationContextFactory.class.getSimpleName());
-        return AuthenticationContext::new;
-    }
+	@Bean
+	@ConditionalOnMissingBean
+	public AuthenticationContextFactory simpleAuthenticationContextFactory() {
+		LOGGER.info(LOG_NO_CUSTOM_BEAN_PROVIDED,
+				AuthenticationContextFactory.class.getSimpleName());
+		return AuthenticationContext::new;
+	}
 
-    @Bean
-    @ConditionalOnMissingBean
-    public JwtAuthenticationFilter jwtAuthenticationFilter(JwtAuthenticationSettings jwtAuthenticationSettings) {
-        return new JwtAuthenticationFilter(jwtAuthenticationSettings,
-                noOpUserDetailsValidator(),
-                noOpUserDetailsFinder(),
-                simpleAuthenticationContextFactory());
-    }
+	@Bean
+	@ConditionalOnMissingBean
+	public JwtAuthenticationFilter jwtAuthenticationFilter(
+			JwtAuthenticationSettings jwtAuthenticationSettings) {
+		return new JwtAuthenticationFilter(jwtAuthenticationSettings,
+				noOpUserDetailsValidator(), noOpUserDetailsFinder(),
+				simpleAuthenticationContextFactory());
+	}
 
 }

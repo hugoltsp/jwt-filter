@@ -8,6 +8,6 @@ import java.util.Optional;
 @FunctionalInterface
 public interface AuthenticationContextFactory {
 
-    AuthenticationContext create(Optional<UserDetails> userDetails, Claims claims);
+	AuthenticationContext create(Optional<UserDetails> userDetails, Claims claims);
 
 }
