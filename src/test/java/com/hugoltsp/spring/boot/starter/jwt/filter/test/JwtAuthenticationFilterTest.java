@@ -3,7 +3,7 @@ package com.hugoltsp.spring.boot.starter.jwt.filter.test;
 import com.hugoltsp.spring.boot.starter.jwt.filter.JwtAuthenticationFilter;
 import com.hugoltsp.spring.boot.starter.jwt.filter.authentication.AuthenticationContextFactory;
 import com.hugoltsp.spring.boot.starter.jwt.filter.setting.JwtAuthenticationSettings;
-import com.hugoltsp.spring.boot.starter.jwt.filter.userdetails.UserDetailsFinder;
+import com.hugoltsp.spring.boot.starter.jwt.filter.userdetails.UserDetailsFactory;
 import com.hugoltsp.spring.boot.starter.jwt.filter.userdetails.UserDetailsValidator;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -34,7 +34,7 @@ public class JwtAuthenticationFilterTest {
 	private UserDetailsValidator userDetailsValidator;
 
 	@Mock
-	private UserDetailsFinder userDetailsFinder;
+	private UserDetailsFactory userDetailsFactory;
 
 	@Mock
 	private AuthenticationContextFactory authenticationContextFactory;
@@ -69,7 +69,7 @@ public class JwtAuthenticationFilterTest {
 
 		when(settings.isPublic(request)).thenReturn(false);
 		when(settings.getSecretKey()).thenReturn("some-secret-key");
-		when(userDetailsFinder.findByClaims(any())).thenReturn(Optional.empty());
+		when(userDetailsFactory.createByClaims(any())).thenReturn(Optional.empty());
 
 		MockHttpServletResponse response = new MockHttpServletResponse();
 		MockFilterChain filterChain = new MockFilterChain();
