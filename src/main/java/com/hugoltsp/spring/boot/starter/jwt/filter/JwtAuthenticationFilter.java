@@ -1,11 +1,11 @@
 package com.hugoltsp.spring.boot.starter.jwt.filter;
 
+import com.hugoltsp.spring.boot.starter.jwt.filter.authentication.AuthenticationContextFactory;
 import com.hugoltsp.spring.boot.starter.jwt.filter.authentication.AuthenticationContextHolder;
 import com.hugoltsp.spring.boot.starter.jwt.filter.setting.JwtAuthenticationSettings;
 import com.hugoltsp.spring.boot.starter.jwt.filter.userdetails.UserDetails;
 import com.hugoltsp.spring.boot.starter.jwt.filter.userdetails.UserDetailsFactory;
 import com.hugoltsp.spring.boot.starter.jwt.filter.userdetails.UserDetailsValidator;
-import com.hugoltsp.spring.boot.starter.jwt.filter.authentication.AuthenticationContextFactory;
 import com.hugoltsp.spring.boot.starter.jwt.filter.util.AuthorizationHeaderUtil;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;

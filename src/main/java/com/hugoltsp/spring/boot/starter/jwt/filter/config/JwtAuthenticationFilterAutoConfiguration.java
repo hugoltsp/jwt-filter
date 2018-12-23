@@ -26,8 +26,7 @@ public class JwtAuthenticationFilterAutoConfiguration {
     @Bean
     @ConditionalOnMissingBean
     public UserDetailsValidator noOpUserDetailsValidator() {
-        LOGGER.info(LOG_NO_CUSTOM_BEAN_PROVIDED,
-                UserDetailsValidator.class.getSimpleName());
+        LOGGER.info(LOG_NO_CUSTOM_BEAN_PROVIDED, UserDetailsValidator.class.getSimpleName());
         return (u) -> {
         };
     }
@@ -36,14 +35,13 @@ public class JwtAuthenticationFilterAutoConfiguration {
     @ConditionalOnMissingBean
     public UserDetailsFactory noOpUserDetailsFinder() {
         LOGGER.info(LOG_NO_CUSTOM_BEAN_PROVIDED, UserDetailsFactory.class.getSimpleName());
-        return c -> Optional.empty();
+        return c -> Optional.of(() -> c);
     }
 
     @Bean
     @ConditionalOnMissingBean
     public AuthenticationContextFactory simpleAuthenticationContextFactory() {
-        LOGGER.info(LOG_NO_CUSTOM_BEAN_PROVIDED,
-                AuthenticationContextFactory.class.getSimpleName());
+        LOGGER.info(LOG_NO_CUSTOM_BEAN_PROVIDED, AuthenticationContextFactory.class.getSimpleName());
         return AuthenticationContext::new;
     }
 
