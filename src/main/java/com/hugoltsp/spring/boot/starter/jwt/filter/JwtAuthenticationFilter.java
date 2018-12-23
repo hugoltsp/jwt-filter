@@ -22,16 +22,15 @@ import java.util.Optional;
 
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
-    private static final Logger LOGGER = LoggerFactory
-            .getLogger(JwtAuthenticationFilter.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(JwtAuthenticationFilter.class);
 
     private final JwtAuthenticationSettings settings;
 
-    private final UserDetailsValidator userDetailsValidator;
+    private final UserDetailsValidator<UserDetails> userDetailsValidator;
 
-    private final UserDetailsFactory userDetailsFactory;
+    private final UserDetailsFactory<UserDetails> userDetailsFactory;
 
-    private final AuthenticationContextFactory authenticationContextFactory;
+    private final AuthenticationContextFactory<UserDetails> authenticationContextFactory;
 
     public JwtAuthenticationFilter(JwtAuthenticationSettings settings,
                                    UserDetailsValidator userDetailsValidator,

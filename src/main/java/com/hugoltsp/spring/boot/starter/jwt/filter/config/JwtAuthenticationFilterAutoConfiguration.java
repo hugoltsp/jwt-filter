@@ -4,8 +4,10 @@ import com.hugoltsp.spring.boot.starter.jwt.filter.JwtAuthenticationFilter;
 import com.hugoltsp.spring.boot.starter.jwt.filter.authentication.AuthenticationContext;
 import com.hugoltsp.spring.boot.starter.jwt.filter.authentication.AuthenticationContextFactory;
 import com.hugoltsp.spring.boot.starter.jwt.filter.setting.JwtAuthenticationSettings;
+import com.hugoltsp.spring.boot.starter.jwt.filter.userdetails.UserDetails;
 import com.hugoltsp.spring.boot.starter.jwt.filter.userdetails.UserDetailsFactory;
 import com.hugoltsp.spring.boot.starter.jwt.filter.userdetails.UserDetailsValidator;
+import io.jsonwebtoken.Claims;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -35,7 +37,7 @@ public class JwtAuthenticationFilterAutoConfiguration {
     @ConditionalOnMissingBean
     public UserDetailsFactory noOpUserDetailsFinder() {
         LOGGER.info(LOG_NO_CUSTOM_BEAN_PROVIDED, UserDetailsFactory.class.getSimpleName());
-        return c -> Optional.of(() -> c);
+        return c -> Optional.of((UserDetails) () -> c);
     }
 
     @Bean

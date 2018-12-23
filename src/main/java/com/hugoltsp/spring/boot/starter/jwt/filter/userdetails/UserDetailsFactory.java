@@ -5,8 +5,8 @@ import io.jsonwebtoken.Claims;
 import java.util.Optional;
 
 @FunctionalInterface
-public interface UserDetailsFactory {
+public interface UserDetailsFactory<T extends UserDetails> {
 
-	Optional<UserDetails> createByClaims(Claims claims);
+	Optional<T> createByClaims(Claims claims);
 
 }
