@@ -7,7 +7,6 @@ import com.hugoltsp.spring.boot.starter.jwt.filter.setting.JwtAuthenticationSett
 import com.hugoltsp.spring.boot.starter.jwt.filter.userdetails.UserDetails;
 import com.hugoltsp.spring.boot.starter.jwt.filter.userdetails.UserDetailsFactory;
 import com.hugoltsp.spring.boot.starter.jwt.filter.userdetails.UserDetailsValidator;
-import io.jsonwebtoken.Claims;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -27,7 +26,7 @@ public class JwtAuthenticationFilterAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
-    public UserDetailsValidator noOpUserDetailsValidator() {
+    public UserDetailsValidator<UserDetails> noOpUserDetailsValidator() {
         LOGGER.info(LOG_NO_CUSTOM_BEAN_PROVIDED, UserDetailsValidator.class.getSimpleName());
         return (u) -> {
         };
@@ -35,26 +34,28 @@ public class JwtAuthenticationFilterAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
-    public UserDetailsFactory noOpUserDetailsFinder() {
+    public UserDetailsFactory<UserDetails> noOpUserDetailsFactory() {
         LOGGER.info(LOG_NO_CUSTOM_BEAN_PROVIDED, UserDetailsFactory.class.getSimpleName());
         return c -> Optional.of((UserDetails) () -> c);
     }
 
     @Bean
     @ConditionalOnMissingBean
-    public AuthenticationContextFactory simpleAuthenticationContextFactory() {
+    public AuthenticationContextFactory<UserDetails> simpleAuthenticationContextFactory() {
         LOGGER.info(LOG_NO_CUSTOM_BEAN_PROVIDED, AuthenticationContextFactory.class.getSimpleName());
         return AuthenticationContext::new;
     }
 
     @Bean
     @ConditionalOnMissingBean
-    public JwtAuthenticationFilter jwtAuthenticationFilter(
-            JwtAuthenticationSettings jwtAuthenticationSettings) {
+    public JwtAuthenticationFilter jwtAuthenticationFilter(JwtAuthenticationSettings jwtAuthenticationSettings,
+                                                           UserDetailsValidator<UserDetails> userDetailsValidator,
+                                                           UserDetailsFactory<UserDetails> userDetailsFactory,
+                                                           AuthenticationContextFactory<UserDetails> authenticationContextFactory) {
         return new JwtAuthenticationFilter(jwtAuthenticationSettings,
-                noOpUserDetailsValidator(),
-                noOpUserDetailsFinder(),
-                simpleAuthenticationContextFactory());
+                userDetailsValidator,
+                userDetailsFactory,
+                authenticationContextFactory);
     }
 
 }
