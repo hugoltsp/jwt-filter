@@ -33,9 +33,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final AuthenticationContextFactory<UserDetails> authenticationContextFactory;
 
     public JwtAuthenticationFilter(JwtAuthenticationSettings settings,
-                                   UserDetailsValidator userDetailsValidator,
-                                   UserDetailsFactory userDetailsFactory,
-                                   AuthenticationContextFactory authenticationContextFactory) {
+                                   UserDetailsValidator<UserDetails> userDetailsValidator,
+                                   UserDetailsFactory<UserDetails> userDetailsFactory,
+                                   AuthenticationContextFactory<UserDetails> authenticationContextFactory) {
         this.settings = settings;
         this.userDetailsValidator = userDetailsValidator;
         this.userDetailsFactory = userDetailsFactory;
@@ -62,13 +62,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
                 Optional<UserDetails> userDetails = userDetailsFactory.createByClaims(claims);
 
-                userDetails.ifPresent(user -> userDetailsValidator.validate(user));
+                userDetails.ifPresent(userDetailsValidator::validate);
 
                 AuthenticationContextHolder.set(authenticationContextFactory.create(userDetails));
 
             } catch (Exception e) {
                 LOGGER.error("Invalid token.", e);
                 response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+                return;
             }
 
         }

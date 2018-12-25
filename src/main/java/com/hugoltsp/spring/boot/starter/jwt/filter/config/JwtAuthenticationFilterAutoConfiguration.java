@@ -47,7 +47,6 @@ public class JwtAuthenticationFilterAutoConfiguration {
     }
 
     @Bean
-    @ConditionalOnMissingBean
     public JwtAuthenticationFilter jwtAuthenticationFilter(JwtAuthenticationSettings jwtAuthenticationSettings,
                                                            UserDetailsValidator<UserDetails> userDetailsValidator,
                                                            UserDetailsFactory<UserDetails> userDetailsFactory,

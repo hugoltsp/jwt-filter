@@ -21,13 +21,12 @@ public class JwtAuthenticationSettings {
                                      PublicResource... publicResources) {
 
         if (StringUtils.isEmpty(secretKey)) {
-            throw new IllegalArgumentException(String.format(
-                    "Illegal secretKey: [%s], it cannot be empty or null.", secretKey));
+            throw new IllegalArgumentException(String.format("Illegal secretKey: [%s], it cannot be empty or null.",
+                    secretKey));
         }
 
         this.secretKey = secretKey;
-        this.publicResources = publicResources == null ? Collections.emptyList()
-                : Arrays.asList(publicResources);
+        this.publicResources = publicResources == null ? Collections.emptyList() : Arrays.asList(publicResources);
     }
 
     public String getSecretKey() {
@@ -46,8 +45,7 @@ public class JwtAuthenticationSettings {
 
     private boolean isPublicResource(HttpServletRequest request) {
 
-        return !publicResources.isEmpty()
-                && publicResources.stream().anyMatch(r -> r.isPublic(request));
+        return !publicResources.isEmpty() && publicResources.stream().anyMatch(r -> r.isPublic(request));
     }
 
     public static class PublicResource {
@@ -61,20 +59,19 @@ public class JwtAuthenticationSettings {
             this.urls = urls;
         }
 
-        public boolean isPublic(HttpServletRequest request) {
+        private boolean isPublic(HttpServletRequest request) {
 
             return httpMethodMatches(request.getMethod()) && urlMatches(request);
         }
 
         private boolean httpMethodMatches(String method) {
 
-            return this.method == null ? true : this.method.matches(method);
+            return this.method == null || this.method.matches(method);
         }
 
         private boolean urlMatches(HttpServletRequest request) {
 
-            return urls.stream().anyMatch(
-                    url -> AntMatcherUtil.matches(url, request.getRequestURI()));
+            return urls.stream().anyMatch(url -> AntMatcherUtil.matches(url, request.getRequestURI()));
         }
 
     }
