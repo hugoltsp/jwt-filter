@@ -1,32 +1,44 @@
 package com.hugoltsp.spring.boot.starter.jwt.filter.setting;
 
 import com.hugoltsp.spring.boot.starter.jwt.filter.util.AntMatcherUtil;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.util.StringUtils;
 
+import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
-import java.util.Arrays;
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
 
 @Configuration
+@ConfigurationProperties("jwt.filter")
 public class JwtAuthenticationSettings {
 
-    private final String secretKey;
+    private String secretKey;
 
-    private final List<PublicResource> publicResources;
+    private List<PublicResource> publicResources = new ArrayList<>();
 
-    public JwtAuthenticationSettings(String secretKey,
-                                     PublicResource... publicResources) {
+    @PostConstruct
+    private void validate() {
 
-        if (StringUtils.isEmpty(secretKey)) {
+        if (StringUtils.isEmpty(getSecretKey())) {
             throw new IllegalArgumentException(String.format("Illegal secretKey: [%s], it cannot be empty or null.",
-                    secretKey));
+                    getSecretKey()));
         }
 
+    }
+
+    public void setSecretKey(String secretKey) {
         this.secretKey = secretKey;
-        this.publicResources = publicResources == null ? Collections.emptyList() : Arrays.asList(publicResources);
+    }
+
+    public List<PublicResource> getPublicResources() {
+        return publicResources;
+    }
+
+    public void setPublicResources(List<PublicResource> publicResources) {
+        this.publicResources = publicResources;
     }
 
     public String getSecretKey() {
@@ -50,14 +62,9 @@ public class JwtAuthenticationSettings {
 
     public static class PublicResource {
 
-        private final HttpMethod method;
+        private HttpMethod method;
 
-        private final List<String> urls;
-
-        public PublicResource(HttpMethod method, List<String> urls) {
-            this.method = method;
-            this.urls = urls;
-        }
+        private List<String> urls = new ArrayList<>();
 
         private boolean isPublic(HttpServletRequest request) {
 
@@ -74,6 +81,21 @@ public class JwtAuthenticationSettings {
             return urls.stream().anyMatch(url -> AntMatcherUtil.matches(url, request.getRequestURI()));
         }
 
+        public HttpMethod getMethod() {
+            return method;
+        }
+
+        public void setMethod(HttpMethod method) {
+            this.method = method;
+        }
+
+        public List<String> getUrls() {
+            return urls;
+        }
+
+        public void setUrls(List<String> urls) {
+            this.urls = urls;
+        }
     }
 
 }

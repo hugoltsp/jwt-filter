@@ -36,6 +36,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                                    UserDetailsValidator<UserDetails> userDetailsValidator,
                                    UserDetailsFactory<UserDetails> userDetailsFactory,
                                    AuthenticationContextFactory<UserDetails> authenticationContextFactory) {
+
         this.settings = settings;
         this.userDetailsValidator = userDetailsValidator;
         this.userDetailsFactory = userDetailsFactory;
