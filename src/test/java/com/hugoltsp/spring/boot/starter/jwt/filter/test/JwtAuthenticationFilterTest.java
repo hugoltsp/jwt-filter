@@ -2,13 +2,19 @@ package com.hugoltsp.spring.boot.starter.jwt.filter.test;
 
 import com.hugoltsp.spring.boot.starter.jwt.filter.JwtAuthenticationFilter;
 import com.hugoltsp.spring.boot.starter.jwt.filter.authentication.AuthenticationContextFactory;
-import com.hugoltsp.spring.boot.starter.jwt.filter.setting.JwtAuthenticationSettings;
+import com.hugoltsp.spring.boot.starter.jwt.filter.parser.DefaultJwtParser;
+import com.hugoltsp.spring.boot.starter.jwt.filter.request.DefaultRequestMatcher;
+import com.hugoltsp.spring.boot.starter.jwt.filter.request.HttpRequest;
+import com.hugoltsp.spring.boot.starter.jwt.filter.userdetails.UserDetails;
 import com.hugoltsp.spring.boot.starter.jwt.filter.userdetails.UserDetailsFactory;
 import com.hugoltsp.spring.boot.starter.jwt.filter.userdetails.UserDetailsValidator;
+import com.hugoltsp.spring.boot.starter.jwt.filter.util.AuthorizationHeaderUtil;
+import io.jsonwebtoken.impl.DefaultClaims;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.mock.web.MockFilterChain;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -20,78 +26,149 @@ import static javax.servlet.http.HttpServletResponse.SC_OK;
 import static javax.servlet.http.HttpServletResponse.SC_UNAUTHORIZED;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.HttpMethod.GET;
 
 @RunWith(MockitoJUnitRunner.class)
 public class JwtAuthenticationFilterTest {
 
-	@Mock
-	private JwtAuthenticationSettings settings;
+    @Mock
+    private DefaultJwtParser jwtParser;
 
-	@Mock
-	private UserDetailsValidator userDetailsValidator;
+    @Mock
+    private DefaultRequestMatcher requestMatcher;
 
-	@Mock
-	private UserDetailsFactory userDetailsFactory;
+    @Mock
+    private UserDetailsValidator userDetailsValidator;
 
-	@Mock
-	private AuthenticationContextFactory authenticationContextFactory;
+    @Mock
+    private UserDetailsFactory userDetailsFactory;
 
-	@InjectMocks
-	private JwtAuthenticationFilter jwtAuthenticationFilter;
+    @Mock
+    private AuthenticationContextFactory authenticationContextFactory;
 
-	@Test
-	public void should_return_200_when_request_is_deemed_public() throws Exception {
+    @InjectMocks
+    private JwtAuthenticationFilter jwtAuthenticationFilter;
 
-		MockHttpServletRequest request = new MockHttpServletRequest();
+    @Test
+    public void should_return_200_when_request_is_deemed_public() throws Exception {
 
-		when(settings.isPublic(request)).thenReturn(true);
+        MockHttpServletRequest request = new MockHttpServletRequest();
 
-		MockHttpServletResponse response = new MockHttpServletResponse();
-		MockFilterChain filterChain = new MockFilterChain();
+        when(requestMatcher.isPublic(new HttpRequest(request))).thenReturn(true);
 
-		jwtAuthenticationFilter.doFilter(request, response, filterChain);
+        MockHttpServletResponse response = new MockHttpServletResponse();
+        MockFilterChain filterChain = new MockFilterChain();
 
-		assertThat(response.getStatus()).isEqualTo(SC_OK);
-	}
+        jwtAuthenticationFilter.doFilter(request, response, filterChain);
 
-	@Test
-	public void should_return_200_when_request_is_protected_and_user_is_authenticated()
-			throws Exception {
+        assertThat(response.getStatus()).isEqualTo(SC_OK);
 
-		MockHttpServletRequest request = new MockHttpServletRequest();
-		request.setMethod(GET.name());
-		request.setRequestURI("/test");
-		request.addHeader(AUTHORIZATION,
-				"Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJzdWIiLCJuYW1lIjoiSm9obiBEb2UifQ.jKexo6MlFW78w31biGfZGqaf3LRY3KZKMuXJFtkCJ6k");
+        verify(jwtParser, never()).parse(any());
+        verify(userDetailsFactory, never()).createByClaims(any());
+        verify(userDetailsValidator, never()).validate(any());
+        verify(authenticationContextFactory, never()).create(any());
+    }
 
-		when(settings.isPublic(request)).thenReturn(false);
-		when(settings.getSecretKey()).thenReturn("some-secret-key");
-		when(userDetailsFactory.createByClaims(any())).thenReturn(Optional.empty());
+    @Test
+    public void should_return_200_when_request_is_protected_and_user_is_authenticated()
+            throws Exception {
 
-		MockHttpServletResponse response = new MockHttpServletResponse();
-		MockFilterChain filterChain = new MockFilterChain();
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        request.setMethod(GET.name());
+        request.setRequestURI("/test");
+        request.addHeader(AUTHORIZATION,
+                "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJzdWIiLCJuYW1lIjoiSm9obiBEb2UifQ.jKexo6MlFW78w31biGfZGqaf3LRY3KZKMuXJFtkCJ6k");
+        HttpRequest httpRequest = new HttpRequest(request);
 
-		jwtAuthenticationFilter.doFilter(request, response, filterChain);
+        DefaultClaims defaultClaims = new DefaultClaims();
 
-		assertThat(response.getStatus()).isEqualTo(SC_OK);
-	}
+        when(requestMatcher.isPublic(httpRequest)).thenReturn(false);
+        when(jwtParser.parse(AuthorizationHeaderUtil.extractToken(httpRequest))).thenReturn(defaultClaims);
+        when(userDetailsFactory.createByClaims(defaultClaims)).thenReturn(Optional.empty());
 
-	@Test
-	public void should_return_401_when_request_is_protected() throws Exception {
+        MockHttpServletResponse response = new MockHttpServletResponse();
+        MockFilterChain filterChain = new MockFilterChain();
 
-		MockHttpServletRequest request = new MockHttpServletRequest();
+        jwtAuthenticationFilter.doFilter(request, response, filterChain);
 
-		when(settings.isPublic(request)).thenReturn(false);
+        assertThat(response.getStatus()).isEqualTo(SC_OK);
 
-		MockHttpServletResponse response = new MockHttpServletResponse();
-		MockFilterChain filterChain = new MockFilterChain();
+        verify(userDetailsValidator, never()).validate(any());
+        verify(authenticationContextFactory, only()).create(any());
+    }
 
-		jwtAuthenticationFilter.doFilter(request, response, filterChain);
+    @Test
+    public void should_return_200_and_validate_user_when_request_is_protected_and_user_is_authenticated_and_userdetails_is_present()
+            throws Exception {
 
-		assertThat(response.getStatus()).isEqualTo(SC_UNAUTHORIZED);
-	}
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        request.setMethod(GET.name());
+        request.setRequestURI("/test");
+        request.addHeader(AUTHORIZATION,
+                "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJzdWIiLCJuYW1lIjoiSm9obiBEb2UifQ.jKexo6MlFW78w31biGfZGqaf3LRY3KZKMuXJFtkCJ6k");
+        HttpRequest httpRequest = new HttpRequest(request);
+
+        DefaultClaims defaultClaims = new DefaultClaims();
+
+        when(requestMatcher.isPublic(httpRequest)).thenReturn(false);
+        when(jwtParser.parse(AuthorizationHeaderUtil.extractToken(httpRequest))).thenReturn(defaultClaims);
+        when(userDetailsFactory.createByClaims(defaultClaims)).thenReturn(Optional.of(Mockito.mock(UserDetails.class)));
+
+        MockHttpServletResponse response = new MockHttpServletResponse();
+        MockFilterChain filterChain = new MockFilterChain();
+
+        jwtAuthenticationFilter.doFilter(request, response, filterChain);
+
+        assertThat(response.getStatus()).isEqualTo(SC_OK);
+
+        verify(userDetailsValidator, only()).validate(any());
+        verify(authenticationContextFactory, only()).create(any());
+    }
+
+    @Test
+    public void should_return_401_and_validate_user_when_request_is_protected_and_user_is_authenticated_and_userdetails_is_not_valid()
+            throws Exception {
+
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        request.setMethod(GET.name());
+        request.setRequestURI("/test");
+        request.addHeader(AUTHORIZATION,
+                "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJzdWIiLCJuYW1lIjoiSm9obiBEb2UifQ.jKexo6MlFW78w31biGfZGqaf3LRY3KZKMuXJFtkCJ6k");
+        HttpRequest httpRequest = new HttpRequest(request);
+
+        DefaultClaims defaultClaims = new DefaultClaims();
+        UserDetails mock = mock(UserDetails.class);
+
+        when(requestMatcher.isPublic(httpRequest)).thenReturn(false);
+        when(jwtParser.parse(AuthorizationHeaderUtil.extractToken(httpRequest))).thenReturn(defaultClaims);
+        when(userDetailsFactory.createByClaims(defaultClaims)).thenReturn(Optional.of(mock));
+        doThrow(new RuntimeException()).when(userDetailsValidator).validate(mock);
+
+        MockHttpServletResponse response = new MockHttpServletResponse();
+        MockFilterChain filterChain = new MockFilterChain();
+
+        jwtAuthenticationFilter.doFilter(request, response, filterChain);
+
+        assertThat(response.getStatus()).isEqualTo(SC_UNAUTHORIZED);
+
+        verify(authenticationContextFactory, never()).create(any());
+    }
+
+    @Test
+    public void should_return_401_when_request_is_protected() throws Exception {
+
+        MockHttpServletRequest request = new MockHttpServletRequest();
+
+        when(requestMatcher.isPublic(new HttpRequest(request))).thenReturn(false);
+
+        MockHttpServletResponse response = new MockHttpServletResponse();
+        MockFilterChain filterChain = new MockFilterChain();
+
+        jwtAuthenticationFilter.doFilter(request, response, filterChain);
+
+        assertThat(response.getStatus()).isEqualTo(SC_UNAUTHORIZED);
+    }
 
 }
