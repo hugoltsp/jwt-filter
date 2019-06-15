@@ -1,9 +1,8 @@
 package com.hugoltsp.spring.boot.starter.jwt.filter.util;
 
 import com.hugoltsp.spring.boot.starter.jwt.filter.exception.MalformedAuthorizationHeaderException;
-import org.springframework.http.HttpHeaders;
+import com.hugoltsp.spring.boot.starter.jwt.filter.request.HttpRequest;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.Optional;
 
 public final class AuthorizationHeaderUtil {
@@ -12,9 +11,9 @@ public final class AuthorizationHeaderUtil {
 
     }
 
-    public static String extractToken(HttpServletRequest request) {
+    public static String extractToken(HttpRequest httpRequest) {
 
-        String authorizationHeader = getHeaderValue(request);
+        String authorizationHeader = httpRequest.getAuthorizationHeader();
 
         if (!isHeaderValid(authorizationHeader)) {
             throw new MalformedAuthorizationHeaderException("No valid Authorization Header found");
@@ -22,10 +21,6 @@ public final class AuthorizationHeaderUtil {
 
         return parseToken(authorizationHeader)
                 .orElseThrow(() -> new MalformedAuthorizationHeaderException("Malformed token"));
-    }
-
-    private static String getHeaderValue(HttpServletRequest request) {
-        return request.getHeader(HttpHeaders.AUTHORIZATION);
     }
 
     private static boolean isHeaderValid(String authorizationHeader) {

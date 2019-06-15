@@ -1,5 +1,6 @@
 package com.hugoltsp.spring.boot.starter.jwt.filter.setting;
 
+import com.hugoltsp.spring.boot.starter.jwt.filter.request.HttpRequest;
 import com.hugoltsp.spring.boot.starter.jwt.filter.util.AntMatcherUtil;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
@@ -7,7 +8,6 @@ import org.springframework.http.HttpMethod;
 import org.springframework.util.StringUtils;
 
 import javax.annotation.PostConstruct;
-import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -45,30 +45,15 @@ public class JwtAuthenticationSettings {
         return secretKey;
     }
 
-    public boolean isPublic(HttpServletRequest request) {
-
-        return isPreFlight(request) || isPublicResource(request);
-    }
-
-    private boolean isPreFlight(HttpServletRequest request) {
-
-        return HttpMethod.OPTIONS.matches(request.getMethod());
-    }
-
-    private boolean isPublicResource(HttpServletRequest request) {
-
-        return !publicResources.isEmpty() && publicResources.stream().anyMatch(r -> r.isPublic(request));
-    }
-
     public static class PublicResource {
 
         private HttpMethod method;
 
         private List<String> urls = new ArrayList<>();
 
-        private boolean isPublic(HttpServletRequest request) {
+        public boolean isPublic(HttpRequest httpRequest) {
 
-            return httpMethodMatches(request.getMethod()) && urlMatches(request);
+            return httpMethodMatches(httpRequest.getMethod()) && urlMatches(httpRequest);
         }
 
         private boolean httpMethodMatches(String method) {
@@ -76,9 +61,9 @@ public class JwtAuthenticationSettings {
             return this.method == null || this.method.matches(method);
         }
 
-        private boolean urlMatches(HttpServletRequest request) {
+        private boolean urlMatches(HttpRequest httpRequest) {
 
-            return urls.stream().anyMatch(url -> AntMatcherUtil.matches(url, request.getRequestURI()));
+            return urls.stream().anyMatch(url -> AntMatcherUtil.matches(url, httpRequest.getRequestUri()));
         }
 
         public HttpMethod getMethod() {

@@ -2,13 +2,14 @@ package com.hugoltsp.spring.boot.starter.jwt.filter;
 
 import com.hugoltsp.spring.boot.starter.jwt.filter.authentication.AuthenticationContextFactory;
 import com.hugoltsp.spring.boot.starter.jwt.filter.authentication.AuthenticationContextHolder;
-import com.hugoltsp.spring.boot.starter.jwt.filter.setting.JwtAuthenticationSettings;
+import com.hugoltsp.spring.boot.starter.jwt.filter.parser.JwtParser;
+import com.hugoltsp.spring.boot.starter.jwt.filter.request.HttpRequest;
+import com.hugoltsp.spring.boot.starter.jwt.filter.request.RequestMatcher;
 import com.hugoltsp.spring.boot.starter.jwt.filter.userdetails.UserDetails;
 import com.hugoltsp.spring.boot.starter.jwt.filter.userdetails.UserDetailsFactory;
 import com.hugoltsp.spring.boot.starter.jwt.filter.userdetails.UserDetailsValidator;
 import com.hugoltsp.spring.boot.starter.jwt.filter.util.AuthorizationHeaderUtil;
 import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -24,7 +25,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(JwtAuthenticationFilter.class);
 
-    private final JwtAuthenticationSettings settings;
+    private final RequestMatcher requestMatcher;
+
+    private final JwtParser jwtParser;
 
     private final UserDetailsValidator<UserDetails> userDetailsValidator;
 
@@ -32,34 +35,35 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final AuthenticationContextFactory<UserDetails> authenticationContextFactory;
 
-    public JwtAuthenticationFilter(JwtAuthenticationSettings settings,
+    public JwtAuthenticationFilter(RequestMatcher requestMatcher,
+                                   JwtParser jwtParser,
                                    UserDetailsValidator<UserDetails> userDetailsValidator,
                                    UserDetailsFactory<UserDetails> userDetailsFactory,
                                    AuthenticationContextFactory<UserDetails> authenticationContextFactory) {
-
-        this.settings = settings;
+        this.requestMatcher = requestMatcher;
+        this.jwtParser = jwtParser;
         this.userDetailsValidator = userDetailsValidator;
         this.userDetailsFactory = userDetailsFactory;
         this.authenticationContextFactory = authenticationContextFactory;
     }
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request,
-                                    HttpServletResponse response, FilterChain filterChain)
+    protected void doFilterInternal(HttpServletRequest httpServletRequest,
+                                    HttpServletResponse httpServletResponse,
+                                    FilterChain filterChain)
             throws IOException, ServletException {
 
-        if (settings.isPublic(request)) {
+        HttpRequest httpRequest = new HttpRequest(httpServletRequest);
 
-            response.setStatus(HttpServletResponse.SC_OK);
+        if (requestMatcher.isPublic(httpRequest)) {
+
+            httpServletResponse.setStatus(HttpServletResponse.SC_OK);
 
         } else {
 
             try {
 
-                Claims claims = Jwts.parser()
-                        .setSigningKey(settings.getSecretKey())
-                        .parseClaimsJws(AuthorizationHeaderUtil.extractToken(request))
-                        .getBody();
+                Claims claims = jwtParser.parse(AuthorizationHeaderUtil.extractToken(httpRequest));
 
                 Optional<UserDetails> userDetails = userDetailsFactory.createByClaims(claims);
 
@@ -69,13 +73,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
             } catch (Exception e) {
                 LOGGER.error("Invalid token.", e);
-                response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+                httpServletResponse.sendError(HttpServletResponse.SC_UNAUTHORIZED);
                 return;
             }
 
         }
 
-        filterChain.doFilter(request, response);
+        filterChain.doFilter(httpServletRequest, httpServletResponse);
     }
 
 }

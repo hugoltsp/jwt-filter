@@ -3,6 +3,10 @@ package com.hugoltsp.spring.boot.starter.jwt.filter.config;
 import com.hugoltsp.spring.boot.starter.jwt.filter.JwtAuthenticationFilter;
 import com.hugoltsp.spring.boot.starter.jwt.filter.authentication.AuthenticationContext;
 import com.hugoltsp.spring.boot.starter.jwt.filter.authentication.AuthenticationContextFactory;
+import com.hugoltsp.spring.boot.starter.jwt.filter.parser.DefaultJwtParser;
+import com.hugoltsp.spring.boot.starter.jwt.filter.parser.JwtParser;
+import com.hugoltsp.spring.boot.starter.jwt.filter.request.DefaultRequestMatcher;
+import com.hugoltsp.spring.boot.starter.jwt.filter.request.RequestMatcher;
 import com.hugoltsp.spring.boot.starter.jwt.filter.setting.JwtAuthenticationSettings;
 import com.hugoltsp.spring.boot.starter.jwt.filter.userdetails.UserDetails;
 import com.hugoltsp.spring.boot.starter.jwt.filter.userdetails.UserDetailsFactory;
@@ -28,6 +32,20 @@ public class JwtAuthenticationFilterAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
+    public JwtParser jwtParser(JwtAuthenticationSettings settings) {
+        LOGGER.info(LOG_NO_CUSTOM_BEAN_PROVIDED, JwtParser.class.getSimpleName());
+        return new DefaultJwtParser(settings.getSecretKey());
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    public RequestMatcher requestMatcher(JwtAuthenticationSettings settings) {
+        LOGGER.info(LOG_NO_CUSTOM_BEAN_PROVIDED, RequestMatcher.class.getSimpleName());
+        return new DefaultRequestMatcher(settings.getPublicResources());
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
     public UserDetailsValidator<UserDetails> noOpUserDetailsValidator() {
         LOGGER.info(LOG_NO_CUSTOM_BEAN_PROVIDED, UserDetailsValidator.class.getSimpleName());
         return (u) -> {
@@ -49,11 +67,14 @@ public class JwtAuthenticationFilterAutoConfiguration {
     }
 
     @Bean
-    public JwtAuthenticationFilter jwtAuthenticationFilter(JwtAuthenticationSettings jwtAuthenticationSettings,
+    public JwtAuthenticationFilter jwtAuthenticationFilter(RequestMatcher requestMatcher,
+                                                           JwtParser jwtParser,
                                                            UserDetailsValidator<UserDetails> userDetailsValidator,
                                                            UserDetailsFactory<UserDetails> userDetailsFactory,
                                                            AuthenticationContextFactory<UserDetails> authenticationContextFactory) {
-        return new JwtAuthenticationFilter(jwtAuthenticationSettings,
+
+        return new JwtAuthenticationFilter(requestMatcher,
+                jwtParser,
                 userDetailsValidator,
                 userDetailsFactory,
                 authenticationContextFactory);
