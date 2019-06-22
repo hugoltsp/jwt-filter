@@ -3,7 +3,7 @@ package com.hugoltsp.spring.boot.starter.jwt.filter.test;
 import com.hugoltsp.spring.boot.starter.jwt.filter.JwtAuthenticationFilter;
 import com.hugoltsp.spring.boot.starter.jwt.filter.authentication.AuthenticationContextFactory;
 import com.hugoltsp.spring.boot.starter.jwt.filter.parser.DefaultJwtParser;
-import com.hugoltsp.spring.boot.starter.jwt.filter.request.DefaultRequestMatcher;
+import com.hugoltsp.spring.boot.starter.jwt.filter.request.DefaultHttpRequestMatcher;
 import com.hugoltsp.spring.boot.starter.jwt.filter.request.HttpRequest;
 import com.hugoltsp.spring.boot.starter.jwt.filter.userdetails.UserDetails;
 import com.hugoltsp.spring.boot.starter.jwt.filter.userdetails.UserDetailsFactory;
@@ -37,7 +37,7 @@ public class JwtAuthenticationFilterTest {
     private DefaultJwtParser jwtParser;
 
     @Mock
-    private DefaultRequestMatcher requestMatcher;
+    private DefaultHttpRequestMatcher requestMatcher;
 
     @Mock
     private UserDetailsValidator userDetailsValidator;

@@ -3,17 +3,20 @@ package com.hugoltsp.spring.boot.starter.jwt.filter.request;
 import com.hugoltsp.spring.boot.starter.jwt.filter.setting.JwtAuthenticationSettings.PublicResource;
 import org.springframework.http.HttpMethod;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.Function;
+import java.util.function.Predicate;
 
-public class DefaultRequestMatcher implements RequestMatcher {
+public class DefaultHttpRequestMatcher implements HttpRequestMatcher {
 
     private final List<PublicResource> publicResources;
 
-    public DefaultRequestMatcher(List<PublicResource> publicResources) {
-        this.publicResources = publicResources;
+    public DefaultHttpRequestMatcher(List<PublicResource> publicResources) {
+        this.publicResources = new ArrayList<>(publicResources);
+        this.publicResources.removeIf(Objects::isNull);
     }
 
     @Override
@@ -36,14 +39,14 @@ public class DefaultRequestMatcher implements RequestMatcher {
 
         private static final Set<HttpRequest> MEMOIZED_PUBLIC_HTTP_REQUESTS = ConcurrentHashMap.newKeySet();
 
-        public static boolean computeIfAbsent(HttpRequest httpRequest, Function<HttpRequest, Boolean> function) {
+        public static boolean computeIfAbsent(HttpRequest httpRequest, Predicate<HttpRequest> predicate) {
 
-            return MEMOIZED_PUBLIC_HTTP_REQUESTS.contains(httpRequest) || apply(httpRequest, function);
+            return MEMOIZED_PUBLIC_HTTP_REQUESTS.contains(httpRequest) || test(httpRequest, predicate);
         }
 
-        private static boolean apply(HttpRequest httpRequest, Function<HttpRequest, Boolean> function) {
+        private static boolean test(HttpRequest httpRequest, Predicate<HttpRequest> predicate) {
 
-            boolean isPublic = function.apply(httpRequest);
+            boolean isPublic = predicate.test(httpRequest);
 
             if (isPublic) {
                 MEMOIZED_PUBLIC_HTTP_REQUESTS.add(httpRequest);

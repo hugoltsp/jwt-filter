@@ -4,7 +4,7 @@ import com.hugoltsp.spring.boot.starter.jwt.filter.authentication.Authentication
 import com.hugoltsp.spring.boot.starter.jwt.filter.authentication.AuthenticationContextHolder;
 import com.hugoltsp.spring.boot.starter.jwt.filter.parser.JwtParser;
 import com.hugoltsp.spring.boot.starter.jwt.filter.request.HttpRequest;
-import com.hugoltsp.spring.boot.starter.jwt.filter.request.RequestMatcher;
+import com.hugoltsp.spring.boot.starter.jwt.filter.request.HttpRequestMatcher;
 import com.hugoltsp.spring.boot.starter.jwt.filter.userdetails.UserDetails;
 import com.hugoltsp.spring.boot.starter.jwt.filter.userdetails.UserDetailsFactory;
 import com.hugoltsp.spring.boot.starter.jwt.filter.userdetails.UserDetailsValidator;
@@ -25,7 +25,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(JwtAuthenticationFilter.class);
 
-    private final RequestMatcher requestMatcher;
+    private final HttpRequestMatcher httpRequestMatcher;
 
     private final JwtParser jwtParser;
 
@@ -35,12 +35,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final AuthenticationContextFactory<UserDetails> authenticationContextFactory;
 
-    public JwtAuthenticationFilter(RequestMatcher requestMatcher,
+    public JwtAuthenticationFilter(HttpRequestMatcher httpRequestMatcher,
                                    JwtParser jwtParser,
                                    UserDetailsValidator<UserDetails> userDetailsValidator,
                                    UserDetailsFactory<UserDetails> userDetailsFactory,
                                    AuthenticationContextFactory<UserDetails> authenticationContextFactory) {
-        this.requestMatcher = requestMatcher;
+        this.httpRequestMatcher = httpRequestMatcher;
         this.jwtParser = jwtParser;
         this.userDetailsValidator = userDetailsValidator;
         this.userDetailsFactory = userDetailsFactory;
@@ -55,7 +55,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         HttpRequest httpRequest = new HttpRequest(httpServletRequest);
 
-        if (requestMatcher.isPublic(httpRequest)) {
+        if (httpRequestMatcher.isPublic(httpRequest)) {
 
             httpServletResponse.setStatus(HttpServletResponse.SC_OK);
 

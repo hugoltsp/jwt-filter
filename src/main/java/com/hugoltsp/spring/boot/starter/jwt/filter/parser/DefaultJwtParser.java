@@ -18,7 +18,6 @@ public class DefaultJwtParser implements JwtParser {
                 .setSigningKey(secretKey)
                 .parseClaimsJws(token)
                 .getBody();
-
     }
 
 }

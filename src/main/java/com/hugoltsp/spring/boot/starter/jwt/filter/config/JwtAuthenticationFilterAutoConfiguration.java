@@ -5,8 +5,8 @@ import com.hugoltsp.spring.boot.starter.jwt.filter.authentication.Authentication
 import com.hugoltsp.spring.boot.starter.jwt.filter.authentication.AuthenticationContextFactory;
 import com.hugoltsp.spring.boot.starter.jwt.filter.parser.DefaultJwtParser;
 import com.hugoltsp.spring.boot.starter.jwt.filter.parser.JwtParser;
-import com.hugoltsp.spring.boot.starter.jwt.filter.request.DefaultRequestMatcher;
-import com.hugoltsp.spring.boot.starter.jwt.filter.request.RequestMatcher;
+import com.hugoltsp.spring.boot.starter.jwt.filter.request.DefaultHttpRequestMatcher;
+import com.hugoltsp.spring.boot.starter.jwt.filter.request.HttpRequestMatcher;
 import com.hugoltsp.spring.boot.starter.jwt.filter.setting.JwtAuthenticationSettings;
 import com.hugoltsp.spring.boot.starter.jwt.filter.userdetails.UserDetails;
 import com.hugoltsp.spring.boot.starter.jwt.filter.userdetails.UserDetailsFactory;
@@ -39,9 +39,9 @@ public class JwtAuthenticationFilterAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
-    public RequestMatcher requestMatcher(JwtAuthenticationSettings settings) {
-        LOGGER.info(LOG_NO_CUSTOM_BEAN_PROVIDED, RequestMatcher.class.getSimpleName());
-        return new DefaultRequestMatcher(settings.getPublicResources());
+    public HttpRequestMatcher requestMatcher(JwtAuthenticationSettings settings) {
+        LOGGER.info(LOG_NO_CUSTOM_BEAN_PROVIDED, HttpRequestMatcher.class.getSimpleName());
+        return new DefaultHttpRequestMatcher(settings.getPublicResources());
     }
 
     @Bean
@@ -67,13 +67,13 @@ public class JwtAuthenticationFilterAutoConfiguration {
     }
 
     @Bean
-    public JwtAuthenticationFilter jwtAuthenticationFilter(RequestMatcher requestMatcher,
+    public JwtAuthenticationFilter jwtAuthenticationFilter(HttpRequestMatcher httpRequestMatcher,
                                                            JwtParser jwtParser,
                                                            UserDetailsValidator<UserDetails> userDetailsValidator,
                                                            UserDetailsFactory<UserDetails> userDetailsFactory,
                                                            AuthenticationContextFactory<UserDetails> authenticationContextFactory) {
 
-        return new JwtAuthenticationFilter(requestMatcher,
+        return new JwtAuthenticationFilter(httpRequestMatcher,
                 jwtParser,
                 userDetailsValidator,
                 userDetailsFactory,
