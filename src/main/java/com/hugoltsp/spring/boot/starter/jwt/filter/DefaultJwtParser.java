@@ -1,9 +1,10 @@
-package com.hugoltsp.spring.boot.starter.jwt.filter.parser;
+package com.hugoltsp.spring.boot.starter.jwt.filter;
 
+import com.hugoltsp.spring.boot.starter.jwt.filter.parser.JwtParser;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 
-public class DefaultJwtParser implements JwtParser {
+class DefaultJwtParser implements JwtParser {
 
     private final String secretKey;
 

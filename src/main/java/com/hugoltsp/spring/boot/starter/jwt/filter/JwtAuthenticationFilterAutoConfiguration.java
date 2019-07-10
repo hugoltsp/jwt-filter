@@ -1,13 +1,8 @@
-package com.hugoltsp.spring.boot.starter.jwt.filter.config;
+package com.hugoltsp.spring.boot.starter.jwt.filter;
 
-import com.hugoltsp.spring.boot.starter.jwt.filter.JwtAuthenticationFilter;
-import com.hugoltsp.spring.boot.starter.jwt.filter.authentication.AuthenticationContext;
 import com.hugoltsp.spring.boot.starter.jwt.filter.authentication.AuthenticationContextFactory;
-import com.hugoltsp.spring.boot.starter.jwt.filter.parser.DefaultJwtParser;
+import com.hugoltsp.spring.boot.starter.jwt.filter.matcher.HttpRequestMatcher;
 import com.hugoltsp.spring.boot.starter.jwt.filter.parser.JwtParser;
-import com.hugoltsp.spring.boot.starter.jwt.filter.request.DefaultHttpRequestMatcher;
-import com.hugoltsp.spring.boot.starter.jwt.filter.request.HttpRequestMatcher;
-import com.hugoltsp.spring.boot.starter.jwt.filter.setting.JwtAuthenticationSettings;
 import com.hugoltsp.spring.boot.starter.jwt.filter.userdetails.UserDetails;
 import com.hugoltsp.spring.boot.starter.jwt.filter.userdetails.UserDetailsFactory;
 import com.hugoltsp.spring.boot.starter.jwt.filter.userdetails.UserDetailsValidator;
@@ -19,7 +14,9 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Configuration
 @ConditionalOnClass(JwtAuthenticationFilter.class)
@@ -41,7 +38,11 @@ public class JwtAuthenticationFilterAutoConfiguration {
     @ConditionalOnMissingBean
     public HttpRequestMatcher requestMatcher(JwtAuthenticationSettings settings) {
         LOGGER.info(LOG_NO_CUSTOM_BEAN_PROVIDED, HttpRequestMatcher.class.getSimpleName());
-        return new DefaultHttpRequestMatcher(settings.getPublicResources());
+        return new DefaultHttpRequestMatcher(settings.getPublicResources()
+                .stream()
+                .filter(Objects::nonNull)
+                .map(PublicResourceWrapper::new)
+                .collect(Collectors.toList()));
     }
 
     @Bean

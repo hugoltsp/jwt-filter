@@ -1,6 +1,5 @@
-package com.hugoltsp.spring.boot.starter.jwt.filter.test;
+package com.hugoltsp.spring.boot.starter.jwt.filter;
 
-import com.hugoltsp.spring.boot.starter.jwt.filter.setting.JwtAuthenticationSettings;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;

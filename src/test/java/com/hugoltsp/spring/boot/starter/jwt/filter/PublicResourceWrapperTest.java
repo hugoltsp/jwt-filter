@@ -1,7 +1,5 @@
-package com.hugoltsp.spring.boot.starter.jwt.filter.test;
+package com.hugoltsp.spring.boot.starter.jwt.filter;
 
-import com.hugoltsp.spring.boot.starter.jwt.filter.request.HttpRequest;
-import com.hugoltsp.spring.boot.starter.jwt.filter.setting.JwtAuthenticationSettings.PublicResource;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -13,7 +11,7 @@ import static org.springframework.http.HttpMethod.GET;
 import static org.springframework.http.HttpMethod.POST;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-public class PublicResourceTest {
+public class PublicResourceWrapperTest {
 
     @Test
     public void isPublic_should_return_TRUE_when_PublicResource_is_specified() {
@@ -26,7 +24,7 @@ public class PublicResourceTest {
         request.setMethod(POST.name());
         request.setRequestURI("/test");
 
-        assertThat(publicResource.isPublic(new HttpRequest(request))).isTrue();
+        assertThat(new PublicResourceWrapper(publicResource).isPublic(new HttpRequest(request))).isTrue();
     }
 
     @Test
@@ -40,7 +38,7 @@ public class PublicResourceTest {
         request.setMethod(GET.name());
         request.setRequestURI("/test");
 
-        assertThat(publicResource.isPublic(new HttpRequest(request))).isFalse();
+        assertThat(new PublicResourceWrapper(publicResource).isPublic(new HttpRequest(request))).isFalse();
     }
 
     @Test
@@ -54,7 +52,7 @@ public class PublicResourceTest {
         request.setMethod(POST.name());
         request.setRequestURI("/user");
 
-        assertThat(publicResource.isPublic(new HttpRequest(request))).isFalse();
+        assertThat(new PublicResourceWrapper(publicResource).isPublic(new HttpRequest(request))).isFalse();
     }
 
 }

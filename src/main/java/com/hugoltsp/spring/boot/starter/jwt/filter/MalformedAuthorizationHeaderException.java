@@ -1,6 +1,6 @@
-package com.hugoltsp.spring.boot.starter.jwt.filter.exception;
+package com.hugoltsp.spring.boot.starter.jwt.filter;
 
-public class MalformedAuthorizationHeaderException extends RuntimeException {
+class MalformedAuthorizationHeaderException extends RuntimeException {
 
 	private static final long serialVersionUID = 1L;
 

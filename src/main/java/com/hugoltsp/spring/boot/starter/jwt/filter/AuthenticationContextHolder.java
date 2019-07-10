@@ -1,4 +1,4 @@
-package com.hugoltsp.spring.boot.starter.jwt.filter.authentication;
+package com.hugoltsp.spring.boot.starter.jwt.filter;
 
 import java.util.Optional;
 

@@ -1,14 +1,9 @@
-package com.hugoltsp.spring.boot.starter.jwt.filter.test;
+package com.hugoltsp.spring.boot.starter.jwt.filter;
 
-import com.hugoltsp.spring.boot.starter.jwt.filter.JwtAuthenticationFilter;
 import com.hugoltsp.spring.boot.starter.jwt.filter.authentication.AuthenticationContextFactory;
-import com.hugoltsp.spring.boot.starter.jwt.filter.parser.DefaultJwtParser;
-import com.hugoltsp.spring.boot.starter.jwt.filter.request.DefaultHttpRequestMatcher;
-import com.hugoltsp.spring.boot.starter.jwt.filter.request.HttpRequest;
 import com.hugoltsp.spring.boot.starter.jwt.filter.userdetails.UserDetails;
 import com.hugoltsp.spring.boot.starter.jwt.filter.userdetails.UserDetailsFactory;
 import com.hugoltsp.spring.boot.starter.jwt.filter.userdetails.UserDetailsValidator;
-import com.hugoltsp.spring.boot.starter.jwt.filter.util.AuthorizationHeaderUtil;
 import io.jsonwebtoken.impl.DefaultClaims;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -85,7 +80,7 @@ public class JwtAuthenticationFilterTest {
         DefaultClaims defaultClaims = new DefaultClaims();
 
         when(requestMatcher.isPublic(httpRequest)).thenReturn(false);
-        when(jwtParser.parse(AuthorizationHeaderUtil.extractToken(httpRequest))).thenReturn(defaultClaims);
+        when(jwtParser.parse(HttpRequestUtil.extractToken(httpRequest))).thenReturn(defaultClaims);
         when(userDetailsFactory.createByClaims(defaultClaims)).thenReturn(Optional.empty());
 
         MockHttpServletResponse response = new MockHttpServletResponse();
@@ -113,7 +108,7 @@ public class JwtAuthenticationFilterTest {
         DefaultClaims defaultClaims = new DefaultClaims();
 
         when(requestMatcher.isPublic(httpRequest)).thenReturn(false);
-        when(jwtParser.parse(AuthorizationHeaderUtil.extractToken(httpRequest))).thenReturn(defaultClaims);
+        when(jwtParser.parse(HttpRequestUtil.extractToken(httpRequest))).thenReturn(defaultClaims);
         when(userDetailsFactory.createByClaims(defaultClaims)).thenReturn(Optional.of(Mockito.mock(UserDetails.class)));
 
         MockHttpServletResponse response = new MockHttpServletResponse();
@@ -142,7 +137,7 @@ public class JwtAuthenticationFilterTest {
         UserDetails mock = mock(UserDetails.class);
 
         when(requestMatcher.isPublic(httpRequest)).thenReturn(false);
-        when(jwtParser.parse(AuthorizationHeaderUtil.extractToken(httpRequest))).thenReturn(defaultClaims);
+        when(jwtParser.parse(HttpRequestUtil.extractToken(httpRequest))).thenReturn(defaultClaims);
         when(userDetailsFactory.createByClaims(defaultClaims)).thenReturn(Optional.of(mock));
         doThrow(new RuntimeException()).when(userDetailsValidator).validate(mock);
 

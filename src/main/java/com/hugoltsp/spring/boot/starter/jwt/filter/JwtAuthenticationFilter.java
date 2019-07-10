@@ -1,14 +1,11 @@
 package com.hugoltsp.spring.boot.starter.jwt.filter;
 
 import com.hugoltsp.spring.boot.starter.jwt.filter.authentication.AuthenticationContextFactory;
-import com.hugoltsp.spring.boot.starter.jwt.filter.authentication.AuthenticationContextHolder;
+import com.hugoltsp.spring.boot.starter.jwt.filter.matcher.HttpRequestMatcher;
 import com.hugoltsp.spring.boot.starter.jwt.filter.parser.JwtParser;
-import com.hugoltsp.spring.boot.starter.jwt.filter.request.HttpRequest;
-import com.hugoltsp.spring.boot.starter.jwt.filter.request.HttpRequestMatcher;
 import com.hugoltsp.spring.boot.starter.jwt.filter.userdetails.UserDetails;
 import com.hugoltsp.spring.boot.starter.jwt.filter.userdetails.UserDetailsFactory;
 import com.hugoltsp.spring.boot.starter.jwt.filter.userdetails.UserDetailsValidator;
-import com.hugoltsp.spring.boot.starter.jwt.filter.util.AuthorizationHeaderUtil;
 import io.jsonwebtoken.Claims;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -63,7 +60,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
             try {
 
-                Claims claims = jwtParser.parse(AuthorizationHeaderUtil.extractToken(httpRequest));
+                Claims claims = jwtParser.parse(HttpRequestUtil.extractToken(httpRequest));
 
                 Optional<UserDetails> userDetails = userDetailsFactory.createByClaims(claims);
 

@@ -1,5 +1,6 @@
 package com.hugoltsp.spring.boot.starter.jwt.filter.authentication;
 
+import com.hugoltsp.spring.boot.starter.jwt.filter.AuthenticationContext;
 import com.hugoltsp.spring.boot.starter.jwt.filter.userdetails.UserDetails;
 
 import java.util.Optional;

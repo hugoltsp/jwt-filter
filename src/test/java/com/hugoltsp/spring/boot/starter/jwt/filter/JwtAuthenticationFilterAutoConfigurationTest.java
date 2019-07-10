@@ -1,10 +1,8 @@
-package com.hugoltsp.spring.boot.starter.jwt.filter.test;
+package com.hugoltsp.spring.boot.starter.jwt.filter;
 
 import com.hugoltsp.spring.boot.starter.jwt.filter.authentication.AuthenticationContextFactory;
-import com.hugoltsp.spring.boot.starter.jwt.filter.config.JwtAuthenticationFilterAutoConfiguration;
+import com.hugoltsp.spring.boot.starter.jwt.filter.matcher.HttpRequestMatcher;
 import com.hugoltsp.spring.boot.starter.jwt.filter.parser.JwtParser;
-import com.hugoltsp.spring.boot.starter.jwt.filter.request.HttpRequestMatcher;
-import com.hugoltsp.spring.boot.starter.jwt.filter.setting.JwtAuthenticationSettings;
 import com.hugoltsp.spring.boot.starter.jwt.filter.userdetails.UserDetailsFactory;
 import com.hugoltsp.spring.boot.starter.jwt.filter.userdetails.UserDetailsValidator;
 import org.junit.Test;

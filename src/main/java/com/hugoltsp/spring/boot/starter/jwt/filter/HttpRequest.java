@@ -1,4 +1,4 @@
-package com.hugoltsp.spring.boot.starter.jwt.filter.request;
+package com.hugoltsp.spring.boot.starter.jwt.filter;
 
 import org.springframework.http.HttpHeaders;
 

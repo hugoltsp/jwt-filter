@@ -1,8 +1,5 @@
-package com.hugoltsp.spring.boot.starter.jwt.filter.test;
+package com.hugoltsp.spring.boot.starter.jwt.filter;
 
-import com.hugoltsp.spring.boot.starter.jwt.filter.exception.MalformedAuthorizationHeaderException;
-import com.hugoltsp.spring.boot.starter.jwt.filter.request.HttpRequest;
-import com.hugoltsp.spring.boot.starter.jwt.filter.util.AuthorizationHeaderUtil;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -15,7 +12,7 @@ import static org.junit.rules.ExpectedException.none;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-public class AuthorizationHeaderUtilTest {
+public class HttpRequestUtilTest {
 
     @Rule
     public ExpectedException exceptionRule = none();
@@ -29,7 +26,7 @@ public class AuthorizationHeaderUtilTest {
         MockHttpServletRequest request = createRequest(
                 "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJzdWIiLCJuYW1lIjoiSm9obiBEb2UifQ.jKexo6MlFW78w31biGfZGqaf3LRY3KZKMuXJFtkCJ6k");
 
-        assertThat(AuthorizationHeaderUtil.extractToken(new HttpRequest(request)))
+        assertThat(HttpRequestUtil.extractToken(new HttpRequest(request)))
                 .isEqualTo(expectedToken);
     }
 
@@ -40,9 +37,8 @@ public class AuthorizationHeaderUtilTest {
         MockHttpServletRequest request = createRequest("");
 
         exceptionRule.expect(MalformedAuthorizationHeaderException.class);
-        exceptionRule.expectMessage("No valid Authorization Header found");
 
-        AuthorizationHeaderUtil.extractToken(new HttpRequest(request));
+        HttpRequestUtil.extractToken(new HttpRequest(request));
     }
 
     @Test
@@ -52,9 +48,7 @@ public class AuthorizationHeaderUtilTest {
         MockHttpServletRequest request = new MockHttpServletRequest();
 
         exceptionRule.expect(MalformedAuthorizationHeaderException.class);
-        exceptionRule.expectMessage("No valid Authorization Header found");
-
-        AuthorizationHeaderUtil.extractToken(new HttpRequest(request));
+        HttpRequestUtil.extractToken(new HttpRequest(request));
     }
 
     @Test
@@ -64,9 +58,8 @@ public class AuthorizationHeaderUtilTest {
         MockHttpServletRequest request = createRequest(" test test 123");
 
         exceptionRule.expect(MalformedAuthorizationHeaderException.class);
-        exceptionRule.expectMessage("No valid Authorization Header found");
 
-        AuthorizationHeaderUtil.extractToken(new HttpRequest(request));
+        HttpRequestUtil.extractToken(new HttpRequest(request));
     }
 
     @Test
@@ -76,9 +69,8 @@ public class AuthorizationHeaderUtilTest {
         MockHttpServletRequest request = createRequest("Bearer ");
 
         exceptionRule.expect(MalformedAuthorizationHeaderException.class);
-        exceptionRule.expectMessage("Malformed token");
 
-        AuthorizationHeaderUtil.extractToken(new HttpRequest(request));
+        HttpRequestUtil.extractToken(new HttpRequest(request));
     }
 
     private static MockHttpServletRequest createRequest(String authorizationHeaderValue) {

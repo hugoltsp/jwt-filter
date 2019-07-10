@@ -1,8 +1,6 @@
-package com.hugoltsp.spring.boot.starter.jwt.filter.test;
+package com.hugoltsp.spring.boot.starter.jwt.filter;
 
-import com.hugoltsp.spring.boot.starter.jwt.filter.request.DefaultHttpRequestMatcher;
-import com.hugoltsp.spring.boot.starter.jwt.filter.request.HttpRequest;
-import com.hugoltsp.spring.boot.starter.jwt.filter.setting.JwtAuthenticationSettings.PublicResource;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -20,29 +18,42 @@ import static org.springframework.http.HttpMethod.OPTIONS;
 public class DefaultHttpRequestMatcherTest {
 
     @Mock
-    private PublicResource publicResource;
+    private PublicResourceWrapper publicResourceWrapper;
 
     private DefaultHttpRequestMatcher defaultHttpRequestMatcher;
 
+    @Before
+    public void setup() {
+        defaultHttpRequestMatcher = new DefaultHttpRequestMatcher(singletonList(publicResourceWrapper));
+    }
+
     @Test
     public void isPublic_should_return_true_if_method_is_OPTIONS() {
-        assertThat(requestMatcher().isPublic(request(OPTIONS, "/"))).isTrue();
+        assertThat(defaultHttpRequestMatcher.isPublic(request(OPTIONS, "/"))).isTrue();
     }
 
     @Test
     public void isPublic_should_return_true_if_public_resource_match_request() {
         HttpRequest request = request(GET, "/user");
-        when(publicResource.isPublic(request)).thenReturn(true);
+        when(publicResourceWrapper.isPublic(request)).thenReturn(true);
 
-        assertThat(requestMatcher().isPublic(request)).isTrue();
+        assertThat(defaultHttpRequestMatcher.isPublic(request)).isTrue();
+    }
+
+    @Test
+    public void isSecured_should_return_false_if_public_resource_match_request() {
+        HttpRequest request = request(GET, "/user");
+        when(publicResourceWrapper.isPublic(request)).thenReturn(true);
+
+        assertThat(defaultHttpRequestMatcher.isSecured(request)).isFalse();
     }
 
     @Test
     public void isPublic_should_return_false_if_public_resource_does_not_match_request() {
         HttpRequest request = request(GET, "/user");
-        when(publicResource.isPublic(request)).thenReturn(false);
+        when(publicResourceWrapper.isPublic(request)).thenReturn(false);
 
-        assertThat(requestMatcher().isPublic(request)).isFalse();
+        assertThat(defaultHttpRequestMatcher.isPublic(request)).isFalse();
     }
 
     private HttpRequest request(HttpMethod httpMethod, String url) {
@@ -50,11 +61,6 @@ public class DefaultHttpRequestMatcherTest {
         request.setMethod(httpMethod.name());
         request.setRequestURI(url);
         return new HttpRequest(request);
-    }
-
-    private DefaultHttpRequestMatcher requestMatcher() {
-        defaultHttpRequestMatcher = new DefaultHttpRequestMatcher(singletonList(publicResource));
-        return defaultHttpRequestMatcher;
     }
 
 }
