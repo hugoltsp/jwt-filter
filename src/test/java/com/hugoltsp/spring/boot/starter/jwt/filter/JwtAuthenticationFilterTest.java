@@ -1,6 +1,7 @@
 package com.hugoltsp.spring.boot.starter.jwt.filter;
 
 import com.hugoltsp.spring.boot.starter.jwt.filter.authentication.AuthenticationContextFactory;
+import com.hugoltsp.spring.boot.starter.jwt.filter.token.JwtValidator;
 import com.hugoltsp.spring.boot.starter.jwt.filter.userdetails.UserDetails;
 import com.hugoltsp.spring.boot.starter.jwt.filter.userdetails.UserDetailsFactory;
 import com.hugoltsp.spring.boot.starter.jwt.filter.userdetails.UserDetailsValidator;
@@ -43,6 +44,9 @@ public class JwtAuthenticationFilterTest {
     @Mock
     private AuthenticationContextFactory authenticationContextFactory;
 
+    @Mock
+    private JwtValidator jwtValidator;
+
     @InjectMocks
     private JwtAuthenticationFilter jwtAuthenticationFilter;
 
@@ -61,6 +65,7 @@ public class JwtAuthenticationFilterTest {
         assertThat(response.getStatus()).isEqualTo(SC_OK);
 
         verify(jwtParser, never()).parse(any());
+        verify(jwtValidator, never()).validateJwt(any());
         verify(userDetailsFactory, never()).createByClaims(any());
         verify(userDetailsValidator, never()).validate(any());
         verify(authenticationContextFactory, never()).create(any());
@@ -90,8 +95,9 @@ public class JwtAuthenticationFilterTest {
 
         assertThat(response.getStatus()).isEqualTo(SC_OK);
 
+        verify(jwtValidator).validateJwt(any());
         verify(userDetailsValidator, never()).validate(any());
-        verify(authenticationContextFactory, only()).create(any());
+        verify(authenticationContextFactory).create(any());
     }
 
     @Test
@@ -118,8 +124,9 @@ public class JwtAuthenticationFilterTest {
 
         assertThat(response.getStatus()).isEqualTo(SC_OK);
 
-        verify(userDetailsValidator, only()).validate(any());
-        verify(authenticationContextFactory, only()).create(any());
+        verify(jwtValidator).validateJwt(any());
+        verify(userDetailsValidator).validate(any());
+        verify(authenticationContextFactory).create(any());
     }
 
     @Test

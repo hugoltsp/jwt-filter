@@ -1,8 +1,9 @@
 package com.hugoltsp.spring.boot.starter.jwt.filter;
 
 import com.hugoltsp.spring.boot.starter.jwt.filter.authentication.AuthenticationContextFactory;
-import com.hugoltsp.spring.boot.starter.jwt.filter.matcher.HttpRequestMatcher;
-import com.hugoltsp.spring.boot.starter.jwt.filter.parser.JwtParser;
+import com.hugoltsp.spring.boot.starter.jwt.filter.request.HttpRequestMatcher;
+import com.hugoltsp.spring.boot.starter.jwt.filter.token.JwtParser;
+import com.hugoltsp.spring.boot.starter.jwt.filter.token.JwtValidator;
 import com.hugoltsp.spring.boot.starter.jwt.filter.userdetails.UserDetails;
 import com.hugoltsp.spring.boot.starter.jwt.filter.userdetails.UserDetailsFactory;
 import com.hugoltsp.spring.boot.starter.jwt.filter.userdetails.UserDetailsValidator;
@@ -32,6 +33,14 @@ public class JwtAuthenticationFilterAutoConfiguration {
     public JwtParser jwtParser(JwtAuthenticationSettings settings) {
         LOGGER.info(LOG_NO_CUSTOM_BEAN_PROVIDED, JwtParser.class.getSimpleName());
         return new DefaultJwtParser(settings.getSecretKey());
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    public JwtValidator noOpJwtValidator() {
+        LOGGER.info(LOG_NO_CUSTOM_BEAN_PROVIDED, JwtValidator.class.getSimpleName());
+        return jwt -> {
+        };
     }
 
     @Bean
@@ -70,11 +79,13 @@ public class JwtAuthenticationFilterAutoConfiguration {
     @Bean
     public JwtAuthenticationFilter jwtAuthenticationFilter(HttpRequestMatcher httpRequestMatcher,
                                                            JwtParser jwtParser,
+                                                           JwtValidator jwtValidator,
                                                            UserDetailsValidator<UserDetails> userDetailsValidator,
                                                            UserDetailsFactory<UserDetails> userDetailsFactory,
                                                            AuthenticationContextFactory<UserDetails> authenticationContextFactory) {
 
         return new JwtAuthenticationFilter(httpRequestMatcher,
+                jwtValidator,
                 jwtParser,
                 userDetailsValidator,
                 userDetailsFactory,

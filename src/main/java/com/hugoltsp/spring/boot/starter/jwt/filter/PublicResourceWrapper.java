@@ -17,21 +17,21 @@ class PublicResourceWrapper {
         return httpMethodMatches(httpRequest.getMethod()) && urlMatches(httpRequest);
     }
 
-    boolean httpMethodMatches(String method) {
+    private boolean httpMethodMatches(String method) {
 
         return getMethod() == null || getMethod().matches(method);
     }
 
-    boolean urlMatches(HttpRequest httpRequest) {
+    private boolean urlMatches(HttpRequest httpRequest) {
 
         return getUrls().stream().anyMatch(url -> AntMatcherUtil.matches(url, httpRequest.getRequestUri()));
     }
 
-    HttpMethod getMethod() {
+    private HttpMethod getMethod() {
         return publicResource.getMethod();
     }
 
-    List<String> getUrls() {
+    private List<String> getUrls() {
         return publicResource.getUrls();
     }
 

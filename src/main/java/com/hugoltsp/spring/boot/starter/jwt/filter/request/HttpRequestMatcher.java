@@ -1,4 +1,4 @@
-package com.hugoltsp.spring.boot.starter.jwt.filter.matcher;
+package com.hugoltsp.spring.boot.starter.jwt.filter.request;
 
 import com.hugoltsp.spring.boot.starter.jwt.filter.HttpRequest;
 

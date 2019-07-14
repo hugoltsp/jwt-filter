@@ -1,6 +1,6 @@
 package com.hugoltsp.spring.boot.starter.jwt.filter;
 
-import com.hugoltsp.spring.boot.starter.jwt.filter.parser.JwtParser;
+import com.hugoltsp.spring.boot.starter.jwt.filter.token.JwtParser;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 

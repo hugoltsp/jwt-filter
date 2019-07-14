@@ -1,8 +1,9 @@
 package com.hugoltsp.spring.boot.starter.jwt.filter;
 
 import com.hugoltsp.spring.boot.starter.jwt.filter.authentication.AuthenticationContextFactory;
-import com.hugoltsp.spring.boot.starter.jwt.filter.matcher.HttpRequestMatcher;
-import com.hugoltsp.spring.boot.starter.jwt.filter.parser.JwtParser;
+import com.hugoltsp.spring.boot.starter.jwt.filter.request.HttpRequestMatcher;
+import com.hugoltsp.spring.boot.starter.jwt.filter.token.JwtParser;
+import com.hugoltsp.spring.boot.starter.jwt.filter.token.JwtValidator;
 import com.hugoltsp.spring.boot.starter.jwt.filter.userdetails.UserDetails;
 import com.hugoltsp.spring.boot.starter.jwt.filter.userdetails.UserDetailsFactory;
 import com.hugoltsp.spring.boot.starter.jwt.filter.userdetails.UserDetailsValidator;
@@ -22,6 +23,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(JwtAuthenticationFilter.class);
 
+    private final JwtValidator jwtValidator;
+
     private final HttpRequestMatcher httpRequestMatcher;
 
     private final JwtParser jwtParser;
@@ -33,10 +36,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final AuthenticationContextFactory<UserDetails> authenticationContextFactory;
 
     public JwtAuthenticationFilter(HttpRequestMatcher httpRequestMatcher,
+                                   JwtValidator jwtValidator,
                                    JwtParser jwtParser,
                                    UserDetailsValidator<UserDetails> userDetailsValidator,
                                    UserDetailsFactory<UserDetails> userDetailsFactory,
                                    AuthenticationContextFactory<UserDetails> authenticationContextFactory) {
+        this.jwtValidator = jwtValidator;
         this.httpRequestMatcher = httpRequestMatcher;
         this.jwtParser = jwtParser;
         this.userDetailsValidator = userDetailsValidator;
@@ -60,7 +65,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
             try {
 
-                Claims claims = jwtParser.parse(HttpRequestUtil.extractToken(httpRequest));
+                String jwt = HttpRequestUtil.extractToken(httpRequest);
+
+                jwtValidator.validateJwt(jwt);
+
+                Claims claims = jwtParser.parse(jwt);
 
                 Optional<UserDetails> userDetails = userDetailsFactory.createByClaims(claims);
 

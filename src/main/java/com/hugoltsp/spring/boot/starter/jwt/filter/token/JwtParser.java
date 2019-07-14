@@ -1,4 +1,4 @@
-package com.hugoltsp.spring.boot.starter.jwt.filter.parser;
+package com.hugoltsp.spring.boot.starter.jwt.filter.token;
 
 import io.jsonwebtoken.Claims;
 

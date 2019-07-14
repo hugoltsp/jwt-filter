@@ -43,4 +43,12 @@ public class HttpRequest {
         return Objects.hash(getMethod(), getRequestUri());
     }
 
+    @Override
+    public String toString() {
+        return "HttpRequest{" +
+                "method='" + method + '\'' +
+                ", requestUri='" + requestUri + '\'' +
+                ", authorizationHeader='" + authorizationHeader + '\'' +
+                '}';
+    }
 }
