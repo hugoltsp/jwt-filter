@@ -1,16 +1,16 @@
 package com.hugoltsp.spring.boot.starter.jwt.filter;
 
 import java.util.Deque;
-import java.util.LinkedList;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.function.Function;
 
 class SimpleFifoHttpRequestCache extends ConcurrentHashMap<HttpRequest, Boolean> {
 
     private final int maxEntries;
 
-    private final Deque<HttpRequest> httpRequestLinkedList = new LinkedList<>();
+    private final Deque<HttpRequest> httpRequestLinkedList = new ConcurrentLinkedDeque<>();
 
     SimpleFifoHttpRequestCache(int maxEntries) {
         this.maxEntries = maxEntries;

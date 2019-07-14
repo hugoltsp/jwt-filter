@@ -3,6 +3,7 @@ package com.hugoltsp.spring.boot.starter.jwt.filter;
 import com.hugoltsp.spring.boot.starter.jwt.filter.authentication.AuthenticationContextFactory;
 import com.hugoltsp.spring.boot.starter.jwt.filter.request.HttpRequestMatcher;
 import com.hugoltsp.spring.boot.starter.jwt.filter.token.JwtParser;
+import com.hugoltsp.spring.boot.starter.jwt.filter.token.JwtValidator;
 import com.hugoltsp.spring.boot.starter.jwt.filter.userdetails.UserDetailsFactory;
 import com.hugoltsp.spring.boot.starter.jwt.filter.userdetails.UserDetailsValidator;
 import org.junit.Test;
@@ -21,6 +22,11 @@ public class JwtAuthenticationFilterAutoConfigurationTest {
 
     @Mock
     private JwtAuthenticationSettings settings;
+
+    @Test
+    public void noOpJwtValidator(){
+        assertThat(autoConfiguration.noOpJwtValidator()).isInstanceOf(JwtValidator.class);
+    }
 
     @Test
     public void jwtParser() {

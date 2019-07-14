@@ -36,7 +36,7 @@ public class HttpRequestUtilTest {
 
         MockHttpServletRequest request = createRequest("");
 
-        exceptionRule.expect(MalformedAuthorizationHeaderException.class);
+        exceptionRule.expect(JwtAuthenticationFilterException.class);
 
         HttpRequestUtil.extractToken(new HttpRequest(request));
     }
@@ -47,7 +47,7 @@ public class HttpRequestUtilTest {
 
         MockHttpServletRequest request = new MockHttpServletRequest();
 
-        exceptionRule.expect(MalformedAuthorizationHeaderException.class);
+        exceptionRule.expect(JwtAuthenticationFilterException.class);
         HttpRequestUtil.extractToken(new HttpRequest(request));
     }
 
@@ -57,7 +57,7 @@ public class HttpRequestUtilTest {
 
         MockHttpServletRequest request = createRequest(" test test 123");
 
-        exceptionRule.expect(MalformedAuthorizationHeaderException.class);
+        exceptionRule.expect(JwtAuthenticationFilterException.class);
 
         HttpRequestUtil.extractToken(new HttpRequest(request));
     }
@@ -68,7 +68,7 @@ public class HttpRequestUtilTest {
 
         MockHttpServletRequest request = createRequest("Bearer ");
 
-        exceptionRule.expect(MalformedAuthorizationHeaderException.class);
+        exceptionRule.expect(JwtAuthenticationFilterException.class);
 
         HttpRequestUtil.extractToken(new HttpRequest(request));
     }

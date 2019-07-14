@@ -18,6 +18,7 @@ class DefaultHttpRequestMatcher implements HttpRequestMatcher {
 
     @Override
     public boolean isPublic(HttpRequest httpRequest) {
+
         return isPreFlight(httpRequest) || cache.computeIfAbsent(httpRequest, this::matchAnyPublicResource);
     }
 

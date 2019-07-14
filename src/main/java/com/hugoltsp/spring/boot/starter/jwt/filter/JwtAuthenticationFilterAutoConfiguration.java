@@ -1,5 +1,6 @@
 package com.hugoltsp.spring.boot.starter.jwt.filter;
 
+import com.hugoltsp.spring.boot.starter.jwt.filter.JwtAuthenticationFilter.JwtAuthenticationFilterBuilder;
 import com.hugoltsp.spring.boot.starter.jwt.filter.authentication.AuthenticationContextFactory;
 import com.hugoltsp.spring.boot.starter.jwt.filter.request.HttpRequestMatcher;
 import com.hugoltsp.spring.boot.starter.jwt.filter.token.JwtParser;
@@ -58,7 +59,7 @@ public class JwtAuthenticationFilterAutoConfiguration {
     @ConditionalOnMissingBean
     public UserDetailsValidator<UserDetails> noOpUserDetailsValidator() {
         LOGGER.info(LOG_NO_CUSTOM_BEAN_PROVIDED, UserDetailsValidator.class.getSimpleName());
-        return (u) -> {
+        return userDetails -> {
         };
     }
 
@@ -66,7 +67,7 @@ public class JwtAuthenticationFilterAutoConfiguration {
     @ConditionalOnMissingBean
     public UserDetailsFactory<UserDetails> noOpUserDetailsFactory() {
         LOGGER.info(LOG_NO_CUSTOM_BEAN_PROVIDED, UserDetailsFactory.class.getSimpleName());
-        return c -> Optional.of((UserDetails) () -> c);
+        return claims -> Optional.of((UserDetails) () -> claims);
     }
 
     @Bean
@@ -84,12 +85,14 @@ public class JwtAuthenticationFilterAutoConfiguration {
                                                            UserDetailsFactory<UserDetails> userDetailsFactory,
                                                            AuthenticationContextFactory<UserDetails> authenticationContextFactory) {
 
-        return new JwtAuthenticationFilter(httpRequestMatcher,
-                jwtValidator,
-                jwtParser,
-                userDetailsValidator,
-                userDetailsFactory,
-                authenticationContextFactory);
+        return new JwtAuthenticationFilterBuilder()
+                .withAuthenticationContextFactory(authenticationContextFactory)
+                .withHttpRequestMatcher(httpRequestMatcher)
+                .withJwtParser(jwtParser)
+                .withJwtValidator(jwtValidator)
+                .withUserDetailsFactory(userDetailsFactory)
+                .withUserDetailsValidator(userDetailsValidator)
+                .build();
     }
 
 }
