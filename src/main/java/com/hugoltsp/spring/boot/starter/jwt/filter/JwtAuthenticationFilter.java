@@ -35,12 +35,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final AuthenticationContextFactory<UserDetails> authenticationContextFactory;
 
-    private JwtAuthenticationFilter(HttpRequestMatcher httpRequestMatcher,
-                                    JwtValidator jwtValidator,
-                                    JwtParser jwtParser,
-                                    UserDetailsValidator<UserDetails> userDetailsValidator,
-                                    UserDetailsFactory<UserDetails> userDetailsFactory,
-                                    AuthenticationContextFactory<UserDetails> authenticationContextFactory) {
+    JwtAuthenticationFilter(HttpRequestMatcher httpRequestMatcher,
+                            JwtValidator jwtValidator,
+                            JwtParser jwtParser,
+                            UserDetailsValidator<UserDetails> userDetailsValidator,
+                            UserDetailsFactory<UserDetails> userDetailsFactory,
+                            AuthenticationContextFactory<UserDetails> authenticationContextFactory) {
         this.jwtValidator = jwtValidator;
         this.httpRequestMatcher = httpRequestMatcher;
         this.jwtParser = jwtParser;
@@ -90,58 +90,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
 
         filterChain.doFilter(httpServletRequest, httpServletResponse);
-    }
-
-    static final class JwtAuthenticationFilterBuilder {
-
-        private JwtValidator jwtValidator;
-        private HttpRequestMatcher httpRequestMatcher;
-        private JwtParser jwtParser;
-        private UserDetailsValidator<UserDetails> userDetailsValidator;
-        private UserDetailsFactory<UserDetails> userDetailsFactory;
-        private AuthenticationContextFactory<UserDetails> authenticationContextFactory;
-
-        JwtAuthenticationFilterBuilder withJwtValidator(JwtValidator jwtValidator) {
-            this.jwtValidator = jwtValidator;
-            return this;
-        }
-
-        JwtAuthenticationFilterBuilder withHttpRequestMatcher(HttpRequestMatcher httpRequestMatcher) {
-            this.httpRequestMatcher = httpRequestMatcher;
-            return this;
-        }
-
-        JwtAuthenticationFilterBuilder withJwtParser(JwtParser jwtParser) {
-            this.jwtParser = jwtParser;
-            return this;
-        }
-
-        JwtAuthenticationFilterBuilder withUserDetailsValidator(UserDetailsValidator<UserDetails> userDetailsValidator) {
-            this.userDetailsValidator = userDetailsValidator;
-            return this;
-        }
-
-        JwtAuthenticationFilterBuilder withUserDetailsFactory(UserDetailsFactory<UserDetails> userDetailsFactory) {
-            this.userDetailsFactory = userDetailsFactory;
-            return this;
-        }
-
-        JwtAuthenticationFilterBuilder withAuthenticationContextFactory(AuthenticationContextFactory<UserDetails> authenticationContextFactory) {
-            this.authenticationContextFactory = authenticationContextFactory;
-            return this;
-        }
-
-        JwtAuthenticationFilter build() {
-            return new JwtAuthenticationFilter(
-                    httpRequestMatcher,
-                    jwtValidator,
-                    jwtParser,
-                    userDetailsValidator,
-                    userDetailsFactory,
-                    authenticationContextFactory
-            );
-        }
-
     }
 
 }

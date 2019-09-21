@@ -19,29 +19,28 @@ class SimpleFifoHttpRequestCache extends ConcurrentHashMap<HttpRequest, Boolean>
     @Override
     public Boolean computeIfAbsent(HttpRequest key, Function<? super HttpRequest, ? extends Boolean> mappingFunction) {
 
-        if (hasExceededMaxEntries()) {
-            removeLastEntry();
-        }
+        removeLastEntries();
 
-        push(key);
-
-        return super.computeIfAbsent(key, mappingFunction);
+        return super.computeIfAbsent(key, mappingFunction.compose(this::push));
     }
 
     private boolean hasExceededMaxEntries() {
         return size() >= maxEntries;
     }
 
-    private void removeLastEntry() {
-        pollLast().ifPresent(super::remove);
+    private void removeLastEntries() {
+        while (hasExceededMaxEntries()) {
+            pollLast().ifPresent(super::remove);
+        }
     }
 
     private Optional<HttpRequest> pollLast() {
         return Optional.ofNullable(httpRequestLinkedList.pollLast());
     }
 
-    private void push(HttpRequest key) {
+    private HttpRequest push(HttpRequest key) {
         httpRequestLinkedList.push(key);
+        return key;
     }
 
 }

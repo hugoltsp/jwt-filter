@@ -4,25 +4,24 @@ import org.junit.Test;
 import org.springframework.http.HttpMethod;
 import org.springframework.mock.web.MockHttpServletRequest;
 
-import java.util.List;
 import java.util.Random;
 
 import static java.util.UUID.randomUUID;
-import static java.util.stream.Collectors.toList;
 import static java.util.stream.Stream.generate;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class SimpleFifoHttpRequestCacheTest {
 
+    int i = 0;
+
     @Test
     public void computeIfAbsent_should_evict_entries_when_size_exceeds() {
         SimpleFifoHttpRequestCache simpleFifoHttpRequestCache = new SimpleFifoHttpRequestCache(256);
 
-        List<HttpRequest> httpRequests = generate(this::createRequest).limit(512).collect(toList());
-
-        httpRequests.forEach(r ->
-                simpleFifoHttpRequestCache.computeIfAbsent(r, it -> true)
-        );
+        generate(this::createRequest)
+                .parallel()
+                .limit(1024)
+                .forEach(r -> simpleFifoHttpRequestCache.computeIfAbsent(r, it -> true));
 
         assertThat(simpleFifoHttpRequestCache.size()).isEqualTo(256);
     }
@@ -30,7 +29,7 @@ public class SimpleFifoHttpRequestCacheTest {
     private HttpRequest createRequest() {
         MockHttpServletRequest mockHttpServletRequest = new MockHttpServletRequest();
         mockHttpServletRequest.setMethod(method());
-        mockHttpServletRequest.setRequestURI(randomUUID().toString());
+        mockHttpServletRequest.setRequestURI(i++ + "|" + randomUUID().toString());
         return new HttpRequest(mockHttpServletRequest);
     }
 

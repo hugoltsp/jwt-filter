@@ -1,6 +1,5 @@
 package com.hugoltsp.spring.boot.starter.jwt.filter;
 
-import com.hugoltsp.spring.boot.starter.jwt.filter.JwtAuthenticationFilter.JwtAuthenticationFilterBuilder;
 import com.hugoltsp.spring.boot.starter.jwt.filter.authentication.AuthenticationContextFactory;
 import com.hugoltsp.spring.boot.starter.jwt.filter.request.HttpRequestMatcher;
 import com.hugoltsp.spring.boot.starter.jwt.filter.token.JwtParser;
@@ -85,14 +84,12 @@ public class JwtAuthenticationFilterAutoConfiguration {
                                                            UserDetailsFactory<UserDetails> userDetailsFactory,
                                                            AuthenticationContextFactory<UserDetails> authenticationContextFactory) {
 
-        return new JwtAuthenticationFilterBuilder()
-                .withAuthenticationContextFactory(authenticationContextFactory)
-                .withHttpRequestMatcher(httpRequestMatcher)
-                .withJwtParser(jwtParser)
-                .withJwtValidator(jwtValidator)
-                .withUserDetailsFactory(userDetailsFactory)
-                .withUserDetailsValidator(userDetailsValidator)
-                .build();
+        return new JwtAuthenticationFilter(httpRequestMatcher,
+                jwtValidator,
+                jwtParser,
+                userDetailsValidator,
+                userDetailsFactory,
+                authenticationContextFactory);
     }
 
 }
