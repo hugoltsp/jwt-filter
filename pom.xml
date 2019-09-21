@@ -19,6 +19,7 @@
         <module>jwt-filter-core</module>
         <module>jwt-filter-spring-boot-starter</module>
         <module>jwt-filter-spring-boot-autoconfigure</module>
+        <module>jwt-filter-spring-boot-starter-test</module>
     </modules>
 
     <dependencyManagement>
