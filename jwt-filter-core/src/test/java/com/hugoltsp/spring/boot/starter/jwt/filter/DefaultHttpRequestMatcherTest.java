@@ -4,7 +4,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.http.HttpMethod;
 import org.springframework.mock.web.MockHttpServletRequest;
 
@@ -36,16 +36,14 @@ public class DefaultHttpRequestMatcherTest {
     public void isPublic_should_return_true_if_public_resource_match_request() {
         HttpRequest request = request(GET, "/user");
         when(publicResourceWrapper.isPublic(request)).thenReturn(true);
-        boolean aPublic = defaultHttpRequestMatcher.isPublic(request);
-        System.out.println(aPublic);
-        assertThat(aPublic).isTrue();
+        boolean isPublic = defaultHttpRequestMatcher.isPublic(request);
+        assertThat(isPublic).isTrue();
     }
 
     @Test
     public void isSecured_should_return_false_if_public_resource_match_request() {
         HttpRequest request = request(GET, "/user");
         when(publicResourceWrapper.isPublic(request)).thenReturn(true);
-
         assertThat(defaultHttpRequestMatcher.isSecured(request)).isFalse();
     }
 
@@ -53,7 +51,6 @@ public class DefaultHttpRequestMatcherTest {
     public void isPublic_should_return_false_if_public_resource_does_not_match_request() {
         HttpRequest request = request(GET, "/user");
         when(publicResourceWrapper.isPublic(request)).thenReturn(false);
-
         assertThat(defaultHttpRequestMatcher.isPublic(request)).isFalse();
     }
 

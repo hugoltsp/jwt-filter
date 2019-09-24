@@ -12,8 +12,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class SimpleFifoHttpRequestCacheTest {
 
-    int i = 0;
-
     @Test
     public void computeIfAbsent_should_evict_entries_when_size_exceeds() {
         SimpleFifoHttpRequestCache simpleFifoHttpRequestCache = new SimpleFifoHttpRequestCache(256);
@@ -29,7 +27,7 @@ public class SimpleFifoHttpRequestCacheTest {
     private HttpRequest createRequest() {
         MockHttpServletRequest mockHttpServletRequest = new MockHttpServletRequest();
         mockHttpServletRequest.setMethod(method());
-        mockHttpServletRequest.setRequestURI(i++ + "|" + randomUUID().toString());
+        mockHttpServletRequest.setRequestURI(randomUUID().toString());
         return new HttpRequest(mockHttpServletRequest);
     }
 

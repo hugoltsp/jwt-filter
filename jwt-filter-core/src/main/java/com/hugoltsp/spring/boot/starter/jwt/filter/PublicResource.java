@@ -26,4 +26,13 @@ public class PublicResource {
     public void setUrls(List<String> urls) {
         this.urls = urls;
     }
+
+    @Override
+    public String toString() {
+        return "PublicResource{" +
+                "method=" + method +
+                ", urls=" + urls +
+                '}';
+    }
+
 }

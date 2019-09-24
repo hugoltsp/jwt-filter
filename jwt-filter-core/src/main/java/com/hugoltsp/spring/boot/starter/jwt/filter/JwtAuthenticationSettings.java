@@ -2,9 +2,7 @@ package com.hugoltsp.spring.boot.starter.jwt.filter;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.util.StringUtils;
 
-import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,16 +13,6 @@ public class JwtAuthenticationSettings {
     private String secretKey;
 
     private List<PublicResource> publicResources = new ArrayList<>();
-
-    @PostConstruct
-    private void validate() {
-
-        if (StringUtils.isEmpty(getSecretKey())) {
-            throw new IllegalArgumentException(String.format("Illegal secretKey: [%s], it cannot be empty or null.",
-                    getSecretKey()));
-        }
-
-    }
 
     public void setSecretKey(String secretKey) {
         this.secretKey = secretKey;
@@ -42,4 +30,11 @@ public class JwtAuthenticationSettings {
         return secretKey;
     }
 
+    @Override
+    public String toString() {
+        return "JwtAuthenticationSettings{" +
+                "secretKey='" + secretKey + '\'' +
+                ", publicResources=" + publicResources +
+                '}';
+    }
 }

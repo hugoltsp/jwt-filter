@@ -18,9 +18,7 @@ class SimpleFifoHttpRequestCache extends ConcurrentHashMap<HttpRequest, Boolean>
 
     @Override
     public Boolean computeIfAbsent(HttpRequest key, Function<? super HttpRequest, ? extends Boolean> mappingFunction) {
-
         removeLastEntries();
-
         return super.computeIfAbsent(key, mappingFunction.compose(this::push));
     }
 

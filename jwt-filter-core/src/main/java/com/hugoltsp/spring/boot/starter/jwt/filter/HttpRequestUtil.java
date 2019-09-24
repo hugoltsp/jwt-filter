@@ -13,7 +13,7 @@ final class HttpRequestUtil {
         return Optional.ofNullable(httpRequest.getAuthorizationHeader())
                 .filter(HttpRequestUtil::isHeaderValid)
                 .map(HttpRequestUtil::parseToken)
-                .orElseThrow(() -> new JwtAuthenticationFilterException(String.format("Malformed token [%s], No valid Authorization Header found", httpRequest.getAuthorizationHeader())));
+                .orElseThrow(() -> new JwtAuthenticationFilterException("No JWT provided in Authorization Header."));
     }
 
     private static boolean isHeaderValid(String authorizationHeader) {

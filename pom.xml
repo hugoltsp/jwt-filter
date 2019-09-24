@@ -20,6 +20,7 @@
         <module>jwt-filter-spring-boot-starter</module>
         <module>jwt-filter-spring-boot-autoconfigure</module>
         <module>jwt-filter-spring-boot-starter-test</module>
+        <module>jwt-filter-kotlin-dsl</module>
     </modules>
 
     <dependencyManagement>
