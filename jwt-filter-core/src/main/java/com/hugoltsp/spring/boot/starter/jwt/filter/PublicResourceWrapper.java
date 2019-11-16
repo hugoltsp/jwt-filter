@@ -24,7 +24,7 @@ class PublicResourceWrapper {
 
     private boolean urlMatches(HttpRequest httpRequest) {
 
-        return getUrls().stream().anyMatch(url -> AntMatcherUtil.matches(url, httpRequest.getRequestUri()));
+        return getUrls().stream().anyMatch(url -> AntMatcher.matches(url, httpRequest.getRequestUri()));
     }
 
     private HttpMethod getMethod() {

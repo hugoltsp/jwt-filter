@@ -2,11 +2,11 @@ package com.hugoltsp.spring.boot.starter.jwt.filter;
 
 import org.springframework.util.AntPathMatcher;
 
-final class AntMatcherUtil {
+final class AntMatcher {
 
     private static final AntPathMatcher ANT_PATH_MATCHER = new AntPathMatcher();
 
-    private AntMatcherUtil() {
+    private AntMatcher() {
 
     }
 
