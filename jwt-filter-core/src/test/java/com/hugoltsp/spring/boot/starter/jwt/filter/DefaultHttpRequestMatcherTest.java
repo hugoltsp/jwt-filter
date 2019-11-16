@@ -36,8 +36,7 @@ public class DefaultHttpRequestMatcherTest {
     public void isPublic_should_return_true_if_public_resource_match_request() {
         HttpRequest request = request(GET, "/user");
         when(publicResourceWrapper.isPublic(request)).thenReturn(true);
-        boolean isPublic = defaultHttpRequestMatcher.isPublic(request);
-        assertThat(isPublic).isTrue();
+        assertThat(defaultHttpRequestMatcher.isPublic(request)).isTrue();
     }
 
     @Test

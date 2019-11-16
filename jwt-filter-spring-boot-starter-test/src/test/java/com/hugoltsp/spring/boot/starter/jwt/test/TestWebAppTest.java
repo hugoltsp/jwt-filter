@@ -6,7 +6,6 @@ import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.server.LocalServerPort;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.web.client.HttpClientErrorException.Unauthorized;
@@ -37,8 +36,7 @@ public class TestWebAppTest {
 
     @Test
     public void public_url_should_return_2xx_when_unauthorized() {
-        HttpStatus statusCode = exchange("/unprotected").getStatusCode();
-        assertThat(statusCode).isEqualTo(OK);
+        assertThat(exchange("/unprotected").getStatusCode()).isEqualTo(OK);
     }
 
     private ResponseEntity<String> exchange(String url) {

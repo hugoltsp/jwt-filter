@@ -18,8 +18,7 @@ public class HttpRequestUtilTest {
     public ExpectedException exceptionRule = none();
 
     @Test
-    public void extractToken_should_return_token_when_request_contains_valid_authorization_header()
-            throws Exception {
+    public void extractToken_should_return_token_when_request_contains_valid_authorization_header() {
 
         String expectedToken = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJzdWIiLCJuYW1lIjoiSm9obiBEb2UifQ.jKexo6MlFW78w31biGfZGqaf3LRY3KZKMuXJFtkCJ6k";
 
@@ -31,8 +30,7 @@ public class HttpRequestUtilTest {
     }
 
     @Test
-    public void extractToken_should_return_MalformedAuthorizationHeaderException_when_no_valid_authorization_header_is_blank()
-            throws Exception {
+    public void extractToken_should_return_MalformedAuthorizationHeaderException_when_no_valid_authorization_header_is_blank() {
 
         MockHttpServletRequest request = createRequest("");
 
@@ -42,8 +40,7 @@ public class HttpRequestUtilTest {
     }
 
     @Test
-    public void extractToken_should_return_MalformedAuthorizationHeaderException_when_no_valid_authorization_header_is_null()
-            throws Exception {
+    public void extractToken_should_return_MalformedAuthorizationHeaderException_when_no_valid_authorization_header_is_null() {
 
         MockHttpServletRequest request = new MockHttpServletRequest();
 
@@ -52,8 +49,7 @@ public class HttpRequestUtilTest {
     }
 
     @Test
-    public void extractToken_should_return_MalformedAuthorizationHeaderException_when_no_valid_authorization_header_has_no_Bearer_prefix()
-            throws Exception {
+    public void extractToken_should_return_MalformedAuthorizationHeaderException_when_no_valid_authorization_header_has_no_Bearer_prefix() {
 
         MockHttpServletRequest request = createRequest(" test test 123");
 
@@ -63,8 +59,7 @@ public class HttpRequestUtilTest {
     }
 
     @Test
-    public void extractToken_should_return_MalformedAuthorizationHeaderException_when_there_is_no_token()
-            throws Exception {
+    public void extractToken_should_return_MalformedAuthorizationHeaderException_when_there_is_no_token() {
 
         MockHttpServletRequest request = createRequest("Bearer ");
 

@@ -24,15 +24,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private static final Logger LOGGER = LoggerFactory.getLogger(JwtAuthenticationFilter.class);
 
     private final JwtValidator jwtValidator;
-
     private final HttpRequestMatcher httpRequestMatcher;
-
     private final JwtParser jwtParser;
-
     private final UserDetailsValidator<UserDetails> userDetailsValidator;
-
     private final UserDetailsFactory<UserDetails> userDetailsFactory;
-
     private final AuthenticationContextFactory<UserDetails> authenticationContextFactory;
 
     JwtAuthenticationFilter(HttpRequestMatcher httpRequestMatcher,
@@ -52,8 +47,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest httpServletRequest,
                                     HttpServletResponse httpServletResponse,
-                                    FilterChain filterChain)
-            throws IOException, ServletException {
+                                    FilterChain filterChain) throws IOException, ServletException {
 
         HttpRequest httpRequest = new HttpRequest(httpServletRequest);
 
@@ -66,15 +60,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             try {
 
                 String jwt = HttpRequestUtil.extractToken(httpRequest);
-
                 jwtValidator.validateJwt(jwt);
-
                 Claims claims = jwtParser.parse(jwt);
-
                 Optional<UserDetails> userDetails = userDetailsFactory.createByClaims(claims);
-
                 userDetails.ifPresent(userDetailsValidator::validate);
-
                 AuthenticationContextHolder.set(authenticationContextFactory.create(userDetails));
 
             } catch (JwtAuthenticationFilterException e) {
