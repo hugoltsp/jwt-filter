@@ -30,11 +30,4 @@ public class JwtAuthenticationSettings {
         return secretKey;
     }
 
-    @Override
-    public String toString() {
-        return "JwtAuthenticationSettings{" +
-                "secretKey='" + secretKey + '\'' +
-                ", publicResources=" + publicResources +
-                '}';
-    }
 }

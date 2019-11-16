@@ -84,7 +84,7 @@ public class JwtAuthenticationFilterTest {
         DefaultClaims defaultClaims = new DefaultClaims();
 
         when(requestMatcher.isPublic(httpRequest)).thenReturn(false);
-        when(jwtParser.parse(HttpRequestUtil.extractToken(httpRequest))).thenReturn(defaultClaims);
+        when(jwtParser.parse(httpRequest.extractToken())).thenReturn(defaultClaims);
         when(userDetailsFactory.createByClaims(defaultClaims)).thenReturn(Optional.empty());
 
         MockHttpServletResponse response = new MockHttpServletResponse();
@@ -113,7 +113,7 @@ public class JwtAuthenticationFilterTest {
         DefaultClaims defaultClaims = new DefaultClaims();
 
         when(requestMatcher.isPublic(httpRequest)).thenReturn(false);
-        when(jwtParser.parse(HttpRequestUtil.extractToken(httpRequest))).thenReturn(defaultClaims);
+        when(jwtParser.parse(httpRequest.extractToken())).thenReturn(defaultClaims);
         when(userDetailsFactory.createByClaims(defaultClaims)).thenReturn(Optional.of(Mockito.mock(UserDetails.class)));
 
         MockHttpServletResponse response = new MockHttpServletResponse();
@@ -143,7 +143,7 @@ public class JwtAuthenticationFilterTest {
         UserDetails mock = mock(UserDetails.class);
 
         when(requestMatcher.isPublic(httpRequest)).thenReturn(false);
-        when(jwtParser.parse(HttpRequestUtil.extractToken(httpRequest))).thenReturn(defaultClaims);
+        when(jwtParser.parse(httpRequest.extractToken())).thenReturn(defaultClaims);
         when(userDetailsFactory.createByClaims(defaultClaims)).thenReturn(Optional.of(mock));
         doThrow(new RuntimeException()).when(userDetailsValidator).validate(mock);
 

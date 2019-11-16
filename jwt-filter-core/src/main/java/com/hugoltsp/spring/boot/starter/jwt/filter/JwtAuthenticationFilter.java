@@ -59,7 +59,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
             try {
 
-                String jwt = HttpRequestUtil.extractToken(httpRequest);
+                String jwt = httpRequest.extractToken();
                 jwtValidator.validateJwt(jwt);
                 Claims claims = jwtParser.parse(jwt);
                 Optional<UserDetails> userDetails = userDetailsFactory.createByClaims(claims);

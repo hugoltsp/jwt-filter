@@ -27,12 +27,4 @@ public class PublicResource {
         this.urls = urls;
     }
 
-    @Override
-    public String toString() {
-        return "PublicResource{" +
-                "method=" + method +
-                ", urls=" + urls +
-                '}';
-    }
-
 }

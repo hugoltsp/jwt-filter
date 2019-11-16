@@ -12,7 +12,7 @@ import static org.junit.rules.ExpectedException.none;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-public class HttpRequestUtilTest {
+public class HttpRequestTest {
 
     @Rule
     public ExpectedException exceptionRule = none();
@@ -22,21 +22,20 @@ public class HttpRequestUtilTest {
 
         String expectedToken = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJzdWIiLCJuYW1lIjoiSm9obiBEb2UifQ.jKexo6MlFW78w31biGfZGqaf3LRY3KZKMuXJFtkCJ6k";
 
-        MockHttpServletRequest request = createRequest(
+        HttpRequest request = createRequest(
                 "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJzdWIiLCJuYW1lIjoiSm9obiBEb2UifQ.jKexo6MlFW78w31biGfZGqaf3LRY3KZKMuXJFtkCJ6k");
 
-        assertThat(HttpRequestUtil.extractToken(new HttpRequest(request)))
-                .isEqualTo(expectedToken);
+        assertThat(request.extractToken()).isEqualTo(expectedToken);
     }
 
     @Test
     public void extractToken_should_return_MalformedAuthorizationHeaderException_when_no_valid_authorization_header_is_blank() {
 
-        MockHttpServletRequest request = createRequest("");
+        HttpRequest request = createRequest("");
 
         exceptionRule.expect(JwtAuthenticationFilterException.class);
 
-        HttpRequestUtil.extractToken(new HttpRequest(request));
+        request.extractToken();
     }
 
     @Test
@@ -45,33 +44,33 @@ public class HttpRequestUtilTest {
         MockHttpServletRequest request = new MockHttpServletRequest();
 
         exceptionRule.expect(JwtAuthenticationFilterException.class);
-        HttpRequestUtil.extractToken(new HttpRequest(request));
+        new HttpRequest(request).extractToken();
     }
 
     @Test
     public void extractToken_should_return_MalformedAuthorizationHeaderException_when_no_valid_authorization_header_has_no_Bearer_prefix() {
 
-        MockHttpServletRequest request = createRequest(" test test 123");
+        HttpRequest request = createRequest(" test test 123");
 
         exceptionRule.expect(JwtAuthenticationFilterException.class);
 
-        HttpRequestUtil.extractToken(new HttpRequest(request));
+        request.extractToken();
     }
 
     @Test
     public void extractToken_should_return_MalformedAuthorizationHeaderException_when_there_is_no_token() {
 
-        MockHttpServletRequest request = createRequest("Bearer ");
+        HttpRequest request = createRequest("Bearer ");
 
         exceptionRule.expect(JwtAuthenticationFilterException.class);
 
-        HttpRequestUtil.extractToken(new HttpRequest(request));
+        request.extractToken();
     }
 
-    private static MockHttpServletRequest createRequest(String authorizationHeaderValue) {
+    private static HttpRequest createRequest(String authorizationHeaderValue) {
         MockHttpServletRequest request = new MockHttpServletRequest();
         request.addHeader(AUTHORIZATION, authorizationHeaderValue);
-        return request;
+        return new HttpRequest(request);
     }
 
 }
