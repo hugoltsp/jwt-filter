@@ -7,24 +7,21 @@ import org.springframework.http.HttpMethod
 @DslMarker
 private annotation class JwtSettingsDsl
 
-fun settings(block: JwtAuthenticationSettingsBuilder.() -> Unit):
-        JwtAuthenticationSettings = JwtAuthenticationSettingsBuilder().apply(block).build()
+fun settings(block: JwtAuthenticationSettingsBuilder.() -> Unit) = JwtAuthenticationSettingsBuilder()
+        .apply(block)
+        .build()
 
 @JwtSettingsDsl
 class JwtAuthenticationSettingsBuilder {
 
-    var secretKey: String = ""
+    var secretKey: String? = null
     private val publicResources = mutableListOf<PublicResource>()
 
-    fun publicResources(block: PublicResources.() -> Unit) {
-        publicResources.addAll(PublicResources().apply(block))
-    }
+    fun publicResources(block: PublicResources.() -> Unit) = publicResources.addAll(PublicResources().apply(block))
 
-    fun build(): JwtAuthenticationSettings {
-        val jwtAuthenticationSettings = JwtAuthenticationSettings()
-        jwtAuthenticationSettings.secretKey = secretKey
-        jwtAuthenticationSettings.publicResources.addAll(publicResources)
-        return jwtAuthenticationSettings
+    fun build() = JwtAuthenticationSettings().apply {
+        secretKey = this@JwtAuthenticationSettingsBuilder.secretKey
+        publicResources.addAll(this@JwtAuthenticationSettingsBuilder.publicResources)
     }
 
 }
@@ -32,25 +29,19 @@ class JwtAuthenticationSettingsBuilder {
 @JwtSettingsDsl
 class PublicResources : ArrayList<PublicResource>() {
 
-    fun publicResource(block: PublicResourceBuilder.() -> Unit) {
-        add(PublicResourceBuilder().apply(block).build())
-    }
+    fun publicResource(block: PublicResourceBuilder.() -> Unit) = add(PublicResourceBuilder().apply(block).build())
 
 }
 
 @JwtSettingsDsl
 class PublicResourceBuilder {
 
-    var method: String? = ""
+    var method: String? = null
+    lateinit var urls: String
 
-    var urls: String = ""
-
-    fun build(): PublicResource {
-
-        val publicResource = PublicResource()
-        publicResource.method = HttpMethod.resolve(method)
-        publicResource.urls = urls.split(",").map { it.trim() }
-        return publicResource
+    fun build() = PublicResource().apply {
+        method = this@PublicResourceBuilder.method.let(HttpMethod::resolve)
+        urls = this@PublicResourceBuilder.urls.split(",").map(String::trim)
     }
 
 }
