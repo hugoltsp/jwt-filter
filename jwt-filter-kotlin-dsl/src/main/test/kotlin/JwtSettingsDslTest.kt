@@ -1,7 +1,7 @@
 import com.hugoltsp.spring.boot.starter.jwt.filter.JwtAuthenticationSettings
 import com.hugoltsp.spring.boot.starter.jwt.filter.dsl.settings
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 class JwtSettingsDslTest {
 

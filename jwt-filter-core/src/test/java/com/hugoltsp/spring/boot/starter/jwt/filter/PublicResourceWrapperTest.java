@@ -1,16 +1,13 @@
 package com.hugoltsp.spring.boot.starter.jwt.filter;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.HttpMethod.GET;
 import static org.springframework.http.HttpMethod.POST;
 
-@RunWith(SpringJUnit4ClassRunner.class)
 public class PublicResourceWrapperTest {
 
     @Test

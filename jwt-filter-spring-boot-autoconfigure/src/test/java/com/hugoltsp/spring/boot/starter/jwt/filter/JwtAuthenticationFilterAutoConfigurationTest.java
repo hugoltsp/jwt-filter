@@ -6,16 +6,16 @@ import com.hugoltsp.spring.boot.starter.jwt.filter.token.JwtParser;
 import com.hugoltsp.spring.boot.starter.jwt.filter.token.JwtValidator;
 import com.hugoltsp.spring.boot.starter.jwt.filter.userdetails.UserDetailsFactory;
 import com.hugoltsp.spring.boot.starter.jwt.filter.userdetails.UserDetailsValidator;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class JwtAuthenticationFilterAutoConfigurationTest {
 
     private final JwtAuthenticationFilterAutoConfiguration autoConfiguration = new JwtAuthenticationFilterAutoConfiguration();
