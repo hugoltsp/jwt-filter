@@ -6,12 +6,12 @@ import com.hugoltsp.spring.boot.starter.jwt.filter.userdetails.UserDetails;
 import com.hugoltsp.spring.boot.starter.jwt.filter.userdetails.UserDetailsFactory;
 import com.hugoltsp.spring.boot.starter.jwt.filter.userdetails.UserDetailsValidator;
 import io.jsonwebtoken.impl.DefaultClaims;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mock.web.MockFilterChain;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -25,7 +25,7 @@ import static org.mockito.Mockito.*;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.HttpMethod.GET;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class JwtAuthenticationFilterTest {
 
     @Mock
@@ -114,7 +114,7 @@ public class JwtAuthenticationFilterTest {
 
         when(requestMatcher.isPublic(httpRequest)).thenReturn(false);
         when(jwtParser.parse(httpRequest.extractToken())).thenReturn(defaultClaims);
-        when(userDetailsFactory.createByClaims(defaultClaims)).thenReturn(Optional.of(Mockito.mock(UserDetails.class)));
+        when(userDetailsFactory.createByClaims(defaultClaims)).thenReturn(Optional.of(mock(UserDetails.class)));
 
         MockHttpServletResponse response = new MockHttpServletResponse();
         MockFilterChain filterChain = new MockFilterChain();
