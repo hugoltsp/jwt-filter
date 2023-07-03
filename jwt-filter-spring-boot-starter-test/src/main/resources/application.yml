@@ -1,0 +1,6 @@
+jwt:
+  filter:
+    secret-key: 1234
+    public-resources:
+      - method: GET
+        urls: /test,/unprotected,/hello-world
